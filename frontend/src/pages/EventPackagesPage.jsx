@@ -112,5 +112,5 @@ export function EventPackagesPage() {
     </>
   )
 }
--e 
+
 export default EventPackagesPage

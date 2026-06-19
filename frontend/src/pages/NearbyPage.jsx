@@ -60,5 +60,5 @@ export function NearbyPage() {
     </>
   )
 }
--e 
+
 export default NearbyPage

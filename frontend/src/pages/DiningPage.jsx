@@ -92,5 +92,5 @@ export function DiningPage() {
     </>
   )
 }
--e 
+
 export default DiningPage
