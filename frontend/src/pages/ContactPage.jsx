@@ -109,17 +109,98 @@ export default function ContactPage() {
         })}</script>
       </Helmet>
 
-      {/* Hero */}
-      <div className="page-hero">
-        <div className="absolute inset-0 hero-pattern" />
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <p className="section-eyebrow text-gold">We'd Love to Hear From You</p>
-          <h1 className="font-serif text-4xl md:text-6xl font-semibold text-white mb-4">Contact Us</h1>
-          <p className="text-white/65 max-w-xl mx-auto text-lg">
-            Available on phone, WhatsApp, or email — 9 AM to 10 PM, every day. Reach out for bookings, queries, or to plan your visit.
-          </p>
+      {/* ── HERO ── */}
+      <section className="relative min-h-[88vh] flex items-center overflow-hidden" style={{ background: '#1A0709' }}>
+        <div className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop')", opacity: 0.15 }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(26,7,9,0.98) 0%, rgba(107,26,43,0.80) 50%, rgba(26,7,9,0.92) 100%)' }} />
+        <div className="absolute inset-0 hero-pattern pointer-events-none" style={{ opacity: 0.06 }} />
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C 30%, #C9A84C 70%, transparent)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C 30%, #C9A84C 70%, transparent)' }} />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-8 py-20 lg:py-24">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+            {/* Left: Headline */}
+            <div className="w-full lg:w-[52%] text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="h-px bg-gold/60 w-8" />
+                <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em]">We'd Love to Hear From You</span>
+                <span className="h-px bg-gold/60 w-8" />
+              </div>
+              <h1 className="font-serif font-bold leading-[1.12] mb-6" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
+                Let's Plan Your<br />
+                <span style={{ background: 'linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Perfect Event
+                </span>
+              </h1>
+              <p className="text-white/65 leading-relaxed mb-8 max-w-lg" style={{ fontSize: 'clamp(0.9375rem, 1.8vw, 1.0625rem)' }}>
+                Available on phone, WhatsApp, or email — 9 AM to 10 PM, every day. Reach out for bookings, wedding planning, or a site visit.
+              </p>
+              <div className="flex flex-wrap gap-3 mb-10">
+                <a href="tel:+917000000000" className="btn-gold btn-lg text-[0.625rem]">
+                  <FiPhone size={13} /> Call Now
+                </a>
+                <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg text-[0.625rem]">
+                  <FaWhatsapp size={14} /> WhatsApp
+                </a>
+              </div>
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 max-w-sm">
+                {[['24/7','Front Desk'],['2 hrs','Reply Time'],['9–10PM','Events Team']].map(([n,l]) => (
+                  <div key={l} className="text-center">
+                    <div className="font-serif text-gold font-bold text-base">{n}</div>
+                    <div className="text-white/45 text-[9px] uppercase tracking-widest mt-0.5">{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Contact info card */}
+            <div className="w-full lg:w-[44%] max-w-md mx-auto lg:mx-0">
+              <div className="bg-[#FAF7F2] shadow-2xl" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+                <div className="text-center px-7 pt-7 pb-4">
+                  <p className="eyebrow">Reach Us Directly</p>
+                  <h2 className="font-serif text-xl text-maroon font-semibold">Yashraj Palace</h2>
+                  <div className="flex items-center justify-center gap-4 my-4">
+                    <span className="h-px bg-gold/60 w-10" />
+                    <span className="text-gold text-xs">✦</span>
+                    <span className="h-px bg-gold/60 w-10" />
+                  </div>
+                </div>
+                <div className="px-7 pb-7 space-y-4">
+                  {[
+                    { icon: <FiPhone size={15} />, label: 'Phone', value: '+91 70000 00000', href: 'tel:+917000000000', color: 'bg-maroon' },
+                    { icon: <FaWhatsapp size={15} />, label: 'WhatsApp', value: '+91 70000 00000', href: 'https://wa.me/917000000000', color: 'bg-green-600' },
+                    { icon: <FiMail size={15} />, label: 'Email', value: 'info@yashrajpalace.com', href: 'mailto:info@yashrajpalace.com', color: 'bg-maroon' },
+                    { icon: <FiMapPin size={15} />, label: 'Address', value: 'Near Mandleshwar, Khargone, MP', href: 'https://maps.google.com/?q=Yashraj+Palace+Mandleshwar', color: 'bg-maroon' },
+                    { icon: <FiClock size={15} />, label: 'Front Desk', value: '24 / 7 — Always open', href: null, color: 'bg-maroon' },
+                  ].map(item => (
+                    <div key={item.label} className="flex items-center gap-4">
+                      <div className={`w-9 h-9 ${item.color} flex items-center justify-center text-white shrink-0`} style={{ borderRadius: 0 }}>
+                        {item.icon}
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-gold">{item.label}</div>
+                        {item.href ? (
+                          <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer"
+                            className="text-charcoal text-sm font-semibold hover:text-maroon transition-colors">{item.value}</a>
+                        ) : (
+                          <span className="text-charcoal text-sm font-semibold">{item.value}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-2">
+                    <a href="#contact-form" className="btn-primary w-full py-3.5 text-xs">
+                      Send a Message →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Quick action bar */}
       <div className="bg-[#1E0610] border-b border-gold/20">
@@ -167,7 +248,7 @@ export default function ContactPage() {
       </div>
 
       {/* Main section: form + details */}
-      <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-5 gap-12">
+      <div id="contact-form" className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-5 gap-12">
 
         {/* Left — details */}
         <div className="lg:col-span-2 space-y-8">

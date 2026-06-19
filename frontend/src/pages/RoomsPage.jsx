@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -7,6 +7,7 @@ import { roomsAPI } from '../utils/api'
 import toast from 'react-hot-toast'
 import { FiCheck, FiUsers, FiMaximize2, FiWifi, FiStar, FiShield } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
+import { Calendar, Users, Heart, ChevronDown } from 'lucide-react'
 
 const AMENITIES = ['Free Wi-Fi','AC','Hot Water','24/7 Room Service','TV','Housekeeping','Parking','Power Backup']
 
@@ -53,6 +54,7 @@ const ROOMS_SCHEMA = {
 const IMG_CLASS = { deluxe: 'room-img-deluxe', premium: 'room-img-premium', suite: 'room-img-suite' }
 
 export default function RoomsPage() {
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [rooms, setRooms]           = useState([])
   const [loading, setLoading]       = useState(true)
@@ -60,6 +62,7 @@ export default function RoomsPage() {
   const [checkOut, setCheckOut]     = useState(searchParams.get('checkOut') ? new Date(searchParams.get('checkOut')) : null)
   const [guests, setGuests]         = useState(searchParams.get('guests') || '2')
   const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || '')
+  const [heroRoomType, setHeroRoomType] = useState('')
 
   useEffect(() => {
     roomsAPI.getAll(typeFilter ? { type: typeFilter } : {})
@@ -67,6 +70,14 @@ export default function RoomsPage() {
       .catch(() => toast.error('Failed to load rooms'))
       .finally(() => setLoading(false))
   }, [typeFilter])
+
+  const handleHeroSearch = () => {
+    if (!checkIn || !checkOut) { toast.error('Please select check-in and check-out dates'); return }
+    const params = new URLSearchParams({ checkIn: checkIn.toISOString(), checkOut: checkOut.toISOString(), guests })
+    if (heroRoomType) params.set('type', heroRoomType)
+    document.getElementById('rooms-list')?.scrollIntoView({ behavior: 'smooth' })
+    setTypeFilter(heroRoomType)
+  }
 
   return (
     <>
@@ -87,29 +98,113 @@ export default function RoomsPage() {
         })}</script>
       </Helmet>
 
-      {/* Hero */}
-      <div className="page-hero">
-        <div className="absolute inset-0 hero-pattern" />
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <p className="section-eyebrow text-gold">Comfort &amp; Elegance</p>
-          <h1 className="font-serif text-4xl md:text-6xl font-semibold text-white mb-4">Rooms &amp; Suites</h1>
-          <p className="text-white/65 max-w-xl mx-auto text-lg">
-            Premium accommodation near Maheshwar Fort and the Narmada Ghats. Every room crafted for comfort, quiet, and a genuine palace-style experience.
-          </p>
-        </div>
-      </div>
+      {/* ── HERO ── */}
+      <section className="relative min-h-[88vh] flex items-center overflow-hidden" style={{ background: '#1A0709' }}>
+        <div className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=2000&auto=format&fit=crop')", opacity: 0.16 }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(26,7,9,0.98) 0%, rgba(107,26,43,0.80) 50%, rgba(26,7,9,0.92) 100%)' }} />
+        <div className="absolute inset-0 hero-pattern pointer-events-none" style={{ opacity: 0.06 }} />
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C 30%, #C9A84C 70%, transparent)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C 30%, #C9A84C 70%, transparent)' }} />
 
-      {/* USP strip */}
-      <div className="bg-[#1E0610] border-b border-gold/20">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 divide-x divide-gold/15">
-          {USP.map(u => (
-            <div key={u.label} className="flex items-center justify-center gap-2 py-4">
-              {u.icon}
-              <span className="text-white/75 text-xs font-semibold tracking-wide">{u.label}</span>
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-8 py-20 lg:py-24">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+            {/* Left: Headline */}
+            <div className="w-full lg:w-[52%] text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="h-px bg-gold/60 w-8" />
+                <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em]">Comfort &amp; Elegance</span>
+                <span className="h-px bg-gold/60 w-8" />
+              </div>
+              <h1 className="font-serif font-bold leading-[1.12] mb-6" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
+                Rooms &amp; Suites<br />
+                <span style={{ background: 'linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Crafted for Royalty
+                </span>
+              </h1>
+              <p className="text-white/65 leading-relaxed mb-8 max-w-lg" style={{ fontSize: 'clamp(0.9375rem, 1.8vw, 1.0625rem)' }}>
+                Premium accommodation near Maheshwar Fort and the Narmada Ghats. Every room offers palace-style comfort, quiet luxury, and warm hospitality.
+              </p>
+              <div className="flex flex-wrap gap-3 mb-10">
+                <a href="#rooms-list" className="btn-gold btn-lg text-[0.625rem]">View All Rooms</a>
+                <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg text-[0.625rem]">
+                  <FaWhatsapp size={14} /> WhatsApp
+                </a>
+              </div>
+              <div className="grid grid-cols-4 gap-4 pt-8 border-t border-white/10 max-w-sm">
+                {[['₹1,800','From/Night'],['3','Room Types'],['4.8★','Rating'],['24/7','Service']].map(([n,l]) => (
+                  <div key={l} className="text-center">
+                    <div className="font-serif text-gold font-bold text-base">{n}</div>
+                    <div className="text-white/45 text-[9px] uppercase tracking-widest mt-0.5">{l}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            {/* Right: Booking widget */}
+            <div className="w-full lg:w-[44%] max-w-md mx-auto lg:mx-0">
+              <div className="bg-[#FAF7F2] shadow-2xl" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+                <div className="text-center px-7 pt-7 pb-4">
+                  <p className="eyebrow">Check Availability</p>
+                  <h2 className="font-serif text-xl text-maroon font-semibold">Reserve Your Room</h2>
+                  <div className="flex items-center justify-center gap-4 my-4">
+                    <span className="h-px bg-gold/60 w-10" />
+                    <span className="text-gold text-xs">✦</span>
+                    <span className="h-px bg-gold/60 w-10" />
+                  </div>
+                </div>
+                <div className="px-7 pb-7 space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { label: 'Check-In',  val: checkIn,  set: setCheckIn,  min: new Date() },
+                      { label: 'Check-Out', val: checkOut, set: setCheckOut, min: checkIn || new Date() },
+                    ].map(f => (
+                      <div key={f.label}>
+                        <label className="label">{f.label}</label>
+                        <div className="flex items-center gap-2 border-b border-stone-300 pb-2">
+                          <Calendar size={14} className="text-gold shrink-0" />
+                          <DatePicker selected={f.val} onChange={f.set} minDate={f.min}
+                            placeholderText="Select date" className="w-full bg-transparent outline-none text-sm text-stone-700" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="label">Guests</label>
+                    <div className="flex items-center gap-2 border-b border-stone-300 pb-2">
+                      <Users size={14} className="text-gold shrink-0" />
+                      <select className="w-full bg-transparent outline-none text-sm text-stone-700 appearance-none"
+                        value={guests} onChange={e => setGuests(e.target.value)}>
+                        {['1','2','3','4','5','6+'].map(g => <option key={g} value={g}>{g} Guest{g!=='1'?'s':''}</option>)}
+                      </select>
+                      <ChevronDown size={13} className="text-stone-400 shrink-0" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="label">Room Type</label>
+                    <div className="flex items-center gap-2 border-b border-stone-300 pb-2">
+                      <Heart size={14} className="text-gold shrink-0" />
+                      <select className="w-full bg-transparent outline-none text-sm text-stone-700 appearance-none"
+                        value={heroRoomType} onChange={e => setHeroRoomType(e.target.value)}>
+                        <option value="">Any Room</option>
+                        <option value="deluxe">Deluxe Room (₹1,800)</option>
+                        <option value="premium">Premium Room (₹2,500)</option>
+                        <option value="suite">Family Suite (₹3,800)</option>
+                      </select>
+                      <ChevronDown size={13} className="text-stone-400 shrink-0" />
+                    </div>
+                  </div>
+                  <button onClick={handleHeroSearch} className="btn-primary w-full py-4 text-sm">
+                    Check Availability →
+                  </button>
+                  <p className="text-xs text-center text-stone-400">Free cancellation · Best price guaranteed</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Search / Filter bar */}
       <div className="bg-[#FAF7F2] border-b py-5 px-4 sticky top-16 z-30 shadow-sm" style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
@@ -141,7 +236,7 @@ export default function RoomsPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div id="rooms-list" className="max-w-7xl mx-auto px-4 py-16">
 
         {/* Amenities strip */}
         <div className="palace-card bg-white p-6 mb-12">

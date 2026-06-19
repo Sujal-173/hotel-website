@@ -79,17 +79,76 @@ export default function GalleryPage() {
         })}</script>
       </Helmet>
 
-      {/* Hero */}
-      <div className="page-hero">
-        <div className="absolute inset-0 hero-pattern" />
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <p className="section-eyebrow text-gold">Our Story in Photos</p>
-          <h1 className="font-serif text-4xl md:text-6xl font-semibold text-white mb-4">Gallery</h1>
-          <p className="text-white/65 max-w-xl mx-auto text-lg">
-            Rooms, weddings, events, garden, banquet hall, and cuisine — every frame a memory at Yashraj Palace.
-          </p>
+      {/* ── HERO ── */}
+      <section className="relative min-h-[88vh] flex items-center overflow-hidden" style={{ background: '#1A0709' }}>
+        <div className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2000&auto=format&fit=crop')", opacity: 0.16 }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(26,7,9,0.98) 0%, rgba(107,26,43,0.80) 50%, rgba(26,7,9,0.92) 100%)' }} />
+        <div className="absolute inset-0 hero-pattern pointer-events-none" style={{ opacity: 0.06 }} />
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C 30%, #C9A84C 70%, transparent)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C 30%, #C9A84C 70%, transparent)' }} />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-8 py-20 lg:py-24">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+            {/* Left: Headline */}
+            <div className="w-full lg:w-[52%] text-white">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="h-px bg-gold/60 w-8" />
+                <span className="text-gold text-[10px] font-bold uppercase tracking-[0.3em]">Our Story in Photos</span>
+                <span className="h-px bg-gold/60 w-8" />
+              </div>
+              <h1 className="font-serif font-bold leading-[1.12] mb-6" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
+                Every Frame,<br />
+                <span style={{ background: 'linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  A Memory
+                </span>
+              </h1>
+              <p className="text-white/65 leading-relaxed mb-8 max-w-lg" style={{ fontSize: 'clamp(0.9375rem, 1.8vw, 1.0625rem)' }}>
+                Rooms, weddings, events, garden, banquet hall, and cuisine — every frame a memory at Yashraj Palace, near Maheshwar.
+              </p>
+              <div className="flex flex-wrap gap-3 mb-10">
+                <button onClick={() => { setFilter('weddings'); document.getElementById('gallery-grid')?.scrollIntoView({ behavior: 'smooth' }) }}
+                  className="btn-gold btn-lg text-[0.625rem]">View Weddings</button>
+                <button onClick={() => { setFilter('rooms'); document.getElementById('gallery-grid')?.scrollIntoView({ behavior: 'smooth' }) }}
+                  className="btn-outline-gold btn-lg text-[0.625rem]">View Rooms</button>
+              </div>
+              <div className="grid grid-cols-4 gap-4 pt-8 border-t border-white/10 max-w-sm">
+                {[['7+','Venues'],['500+','Events'],['3','Room Types'],['1000+','Guests']].map(([n,l]) => (
+                  <div key={l} className="text-center">
+                    <div className="font-serif text-gold font-bold text-base">{n}</div>
+                    <div className="text-white/45 text-[9px] uppercase tracking-widest mt-0.5">{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Category preview mosaic */}
+            <div className="w-full lg:w-[44%] max-w-md mx-auto lg:mx-0">
+              <div className="grid grid-cols-3 grid-rows-2 gap-2" style={{ height: '340px' }}>
+                {[
+                  { cat: 'Weddings',  color: 'from-[#4A0F1D] to-[#8B2238]',  span: 'col-span-2 row-span-1' },
+                  { cat: 'Rooms',     color: 'from-[#2A1A0A] to-[#5C3A1A]',  span: 'col-span-1 row-span-2' },
+                  { cat: 'Garden',    color: 'from-[#0D1A1A] to-[#1A4A4A]',  span: 'col-span-1 row-span-1' },
+                  { cat: 'Banquet',   color: 'from-[#1A0A2A] to-[#4A1A6B]',  span: 'col-span-1 row-span-1' },
+                  { cat: 'Cuisine',   color: 'from-[#1A0E06] to-[#6B3A1A]',  span: 'col-span-1 row-span-1' },
+                ].map(({ cat, color, span }) => (
+                  <div key={cat}
+                    onClick={() => { setFilter(cat.toLowerCase()); document.getElementById('gallery-grid')?.scrollIntoView({ behavior: 'smooth' }) }}
+                    className={`${span} bg-gradient-to-br ${color} cursor-pointer group relative overflow-hidden border border-gold/15 hover:border-gold/50 transition-all duration-300`}
+                    style={{ borderRadius: 0 }}>
+                    <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg,#C9A84C 0,#C9A84C 1px,transparent 0,transparent 50%)', backgroundSize: '10px 10px' }} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-white/70 group-hover:text-gold text-xs font-bold uppercase tracking-widest transition-colors">{cat}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-white/35 text-xs text-center mt-3 tracking-wider uppercase">Click a category to explore</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Stats bar */}
       <div className="bg-[#1E0610] border-b border-gold/20">
@@ -122,7 +181,7 @@ export default function GalleryPage() {
       </div>
 
       {/* Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div id="gallery-grid" className="max-w-7xl mx-auto px-4 py-12">
         {loading ? (
           <div className="flex justify-center py-24"><div className="spinner" /></div>
         ) : shown.length === 0 ? (
