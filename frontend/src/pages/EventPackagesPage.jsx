@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { eventsAPI } from '../utils/api'
-import { FiCheck } from 'react-icons/fi'
+import { Check, Crown, Phone } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 
 const STATIC_PACKAGES = [
   { _id:'s1', name:'Silver Celebration', category:'all',        price:45000,  capacity:{min:50,max:200},   duration:1, badge:'',             venue:'banquet',  inclusions:['Banquet hall access (6 hours)','Basic floral decoration','Sound system & mic setup','Parking for 40 vehicles','1 event coordination staff','Welcome banner'], exclusions:['Catering (priced separately)','Photography','Decoration beyond basics'] },
@@ -18,27 +19,14 @@ const PACKAGES_SCHEMA = {
   '@type': 'EventVenue',
   name: 'Yashraj Palace',
   url: 'https://www.yashrajpalace.com/events/packages',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Near Mandleshwar',
-    addressLocality: 'Mandleshwar',
-    addressRegion: 'Madhya Pradesh',
-    postalCode: '451221',
-    addressCountry: 'IN',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: '22.1740',
-    longitude: '75.6560',
-  },
+  address: { '@type': 'PostalAddress', streetAddress: 'Near Mandleshwar', addressLocality: 'Mandleshwar', addressRegion: 'Madhya Pradesh', postalCode: '451221', addressCountry: 'IN' },
+  geo: { '@type': 'GeoCoordinates', latitude: '22.1740', longitude: '75.6560' },
   maximumAttendeeCapacity: 1000,
   amenityFeature: [
-    { '@type': 'LocationFeatureSpecification', 'name': 'Wedding Garden', value: true },
-    { '@type': 'LocationFeatureSpecification', 'name': 'Banquet Hall', value: true },
-    { '@type': 'LocationFeatureSpecification', 'name': 'In-House Catering', value: true },
-    { '@type': 'LocationFeatureSpecification', 'name': 'Free Parking', value: true },
-    { '@type': 'LocationFeatureSpecification', 'name': 'DJ & Sound', value: true },
-    { '@type': 'LocationFeatureSpecification', 'name': 'Decoration Services', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Wedding Garden', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Banquet Hall', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'In-House Catering', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Free Parking', value: true },
   ],
 }
 
@@ -46,28 +34,14 @@ const FAQ_PACKAGES_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'What is the cheapest event package at Yashraj Palace?',
-      acceptedAnswer: { '@type': 'Answer', text: 'The Birthday Bash package starts at ₹25,000 for up to 150 guests (4 hours). For corporate events, the Corporate Off-Site package starts at ₹55,000 for up to 300 guests with AV setup and lunch buffet included.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'What is included in the Royal Wedding package?',
-      acceptedAnswer: { '@type': 'Answer', text: 'The Royal Wedding package (₹1,80,000) includes: full garden + hall access for the full day, premium floral & mandap decor, DJ, lighting & sound system, 300-plate in-house catering, 4 family rooms for 1 night, and a dedicated wedding coordinator.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'Can Yashraj Palace accommodate 1,000 wedding guests?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Grand Palace package accommodates up to 1,000 guests and includes full use of the garden, banquet hall, and lawn for 2 days with unlimited catering, custom stage, luxury decor, and 10 rooms for 2 nights.' },
-    },
-    {
-      '@type': 'Question',
-      name: 'Is catering included in event packages?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Catering is included in the Royal Wedding (300 plates), Corporate Off-Site (snacks + lunch), and Grand Palace (unlimited catering with live counters) packages. The Silver Celebration, Birthday Bash, and Engagement Garden packages can be customised with catering add-ons.' },
-    },
+    { '@type': 'Question', name: 'What is the cheapest event package at Yashraj Palace?', acceptedAnswer: { '@type': 'Answer', text: 'The Birthday Bash package starts at ₹25,000 for up to 150 guests (4 hours). For corporate events, the Corporate Off-Site package starts at ₹55,000 for up to 300 guests with AV setup and lunch buffet included.' } },
+    { '@type': 'Question', name: 'What is included in the Royal Wedding package?', acceptedAnswer: { '@type': 'Answer', text: 'The Royal Wedding package (₹1,80,000) includes: full garden + hall access for the full day, premium floral & mandap decor, DJ, lighting & sound system, 300-plate in-house catering, 4 family rooms for 1 night, and a dedicated wedding coordinator.' } },
+    { '@type': 'Question', name: 'Can Yashraj Palace accommodate 1,000 wedding guests?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The Grand Palace package accommodates up to 1,000 guests and includes full use of the garden, banquet hall, and lawn for 2 days with unlimited catering, custom stage, luxury decor, and 10 rooms for 2 nights.' } },
+    { '@type': 'Question', name: 'Is catering included in event packages?', acceptedAnswer: { '@type': 'Answer', text: 'Catering is included in the Royal Wedding (300 plates), Corporate Off-Site (snacks + lunch), and Grand Palace (unlimited catering with live counters) packages. Other packages can be customised with catering add-ons.' } },
   ],
 }
+
+const CATS = ['all','wedding','reception','engagement','birthday','corporate','family','cultural']
 
 export default function EventPackagesPage() {
   const [packages, setPackages] = useState([])
@@ -81,7 +55,6 @@ export default function EventPackagesPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const cats = ['all','wedding','reception','engagement','birthday','corporate','family','cultural']
   const filtered = filter === 'all' ? packages : packages.filter(p => p.category === filter)
 
   return (
@@ -106,125 +79,194 @@ export default function EventPackagesPage() {
         })}</script>
       </Helmet>
 
+      {/* ── HERO ── */}
       <div className="page-hero">
-        <div className="absolute inset-0 hero-pattern" />
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <p className="section-eyebrow text-gold">Packages &amp; Pricing</p>
-          <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white mb-4">Event Packages</h1>
-          <p className="text-white/65 max-w-xl mx-auto">Transparent, all-inclusive packages designed for every budget and occasion. No hidden costs, no surprises.</p>
+        <div className="container-palace relative z-10 text-center text-white">
+          <span className="eyebrow text-gold">Packages &amp; Pricing</span>
+          <h1 className="font-serif font-bold text-white mt-3 mb-4"
+            style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
+            Event Packages
+          </h1>
+          <div className="flex items-center justify-center gap-4 my-5">
+            <span className="h-px bg-gold/50 w-16" />
+            <Crown size={14} className="text-gold" />
+            <span className="h-px bg-gold/50 w-16" />
+          </div>
+          <p className="text-white/65 max-w-xl mx-auto text-sm md:text-base">
+            Transparent, all-inclusive packages designed for every budget and occasion. No hidden costs, no surprises.
+          </p>
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10 mt-8 text-center">
+            {[['₹25,000','Starting Price'],['1,000+','Max Guests'],['6','Package Options']].map(([n,l]) => (
+              <div key={l}>
+                <div className="font-serif text-gold font-bold text-lg">{n}</div>
+                <div className="text-white/45 text-[10px] uppercase tracking-widest mt-0.5">{l}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Category filter */}
-      <div className="bg-[#FAF7F2] border-b py-4 px-4 sticky top-16 z-30 overflow-x-auto" style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
-        <div className="flex gap-1.5 max-w-7xl mx-auto min-w-max">
-          {cats.map(c => (
+      {/* ── CATEGORY FILTER ── */}
+      <div className="bg-[#FAF7F2] border-b sticky top-[72px] z-30 overflow-x-auto"
+        style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
+        <div className="flex gap-0 px-4 md:px-8 py-3">
+          {CATS.map(c => (
             <button key={c} onClick={() => setFilter(c)}
-              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
-                filter === c ? 'text-white border-maroon' : 'bg-[#F2EDE4] text-stone-600 border-[#E8E0D8] hover:text-maroon hover:border-gold'
-              }`}
-              style={{ borderRadius: 0, background: filter === c ? 'linear-gradient(135deg, #8B2238, #6B1A2B)' : undefined }}>
+              className={`filter-pill shrink-0 mr-1.5 capitalize ${filter === c ? 'filter-pill-active' : 'filter-pill-inactive'}`}>
               {c}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {loading ? (
-          <div className="flex justify-center py-20"><div className="spinner" /></div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map(pkg => (
-              <div key={pkg._id}
-                className={`bg-white overflow-hidden relative transition-all duration-300 hover:-translate-y-2 ${
-                  pkg.badge === 'Most Popular'
-                    ? 'border-2 border-gold shadow-xl hover:shadow-2xl'
-                    : 'border border-gray-100 shadow-sm hover:shadow-lg'
-                }`}>
-                {pkg.badge && (
-                  <div className="py-1.5 text-center text-xs font-bold tracking-wide"
-                    style={{ background: 'linear-gradient(135deg, #E8C97A, #C9A84C)', color: '#1C1C1E' }}>
-                    {pkg.badge}
-                  </div>
-                )}
-                <div className="p-6">
-                  <h3 className="font-serif text-xl font-semibold mb-1">{pkg.name}</h3>
-                  <p className="text-xs text-charcoal-muted mb-1 capitalize">
-                    {pkg.category} · Up to {pkg.capacity?.max} guests · {pkg.duration} day{pkg.duration > 1 ? 's' : ''}
-                  </p>
-                  <div className="font-serif text-3xl font-semibold text-maroon mt-3 mb-1">
-                    ₹{pkg.price?.toLocaleString('en-IN')}
-                  </div>
-                  <p className="text-xs text-charcoal-muted mb-5">Starting price · Custom quote available</p>
+      {/* ── PACKAGES ── */}
+      <section className="section-lg" style={{ background: '#FAF7F2' }}>
+        <div className="container-palace">
+          {loading ? (
+            <div className="flex justify-center py-20"><div className="spinner" /></div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 text-stone-500">
+              <p className="font-serif text-2xl text-maroon mb-2">No packages in this category</p>
+              <p className="text-sm">Try "All" or <button onClick={() => setFilter('all')} className="text-gold underline">view all packages</button>.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+              {filtered.map(pkg => (
+                <div key={pkg._id}
+                  className={`bg-white flex flex-col relative transition-all duration-300 hover:-translate-y-1 ${
+                    pkg.badge === 'Most Popular'
+                      ? 'border-2 border-gold shadow-xl hover:shadow-2xl'
+                      : 'border border-stone-200 hover:border-gold/40 hover:shadow-lg'
+                  }`}>
+                  {pkg.badge && (
+                    <div className="py-1.5 text-center text-[10px] font-bold uppercase tracking-wider"
+                      style={{ background: 'linear-gradient(135deg, #E8C97A, #C9A84C)', color: '#4A0F1D' }}>
+                      {pkg.badge}
+                    </div>
+                  )}
+                  <div className="p-6 md:p-7 flex flex-col flex-1">
+                    <h3 className="font-serif text-xl text-maroon mb-1">{pkg.name}</h3>
+                    <p className="text-[11px] text-stone-500 uppercase tracking-wider mb-4 pb-4 border-b border-stone-100 capitalize">
+                      {pkg.category} · Up to {pkg.capacity?.max} guests · {pkg.duration} day{pkg.duration > 1 ? 's' : ''}
+                    </p>
+                    <div className="font-serif text-3xl font-bold text-maroon mb-1">
+                      ₹{pkg.price?.toLocaleString('en-IN')}
+                    </div>
+                    <p className="text-[11px] text-stone-500 mb-5">Starting price · Custom quote available</p>
 
-                  {pkg.inclusions?.length > 0 && (
-                    <div className="mb-4">
-                      <p className="text-xs font-semibold text-charcoal uppercase tracking-wider mb-2">Includes</p>
-                      <ul className="space-y-1.5">
-                        {pkg.inclusions.map(inc => (
-                          <li key={inc} className="flex items-start gap-2 text-sm text-charcoal-muted">
-                            <FiCheck className="text-gold shrink-0 mt-0.5" size={13} /> {inc}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {pkg.exclusions?.length > 0 && (
-                    <div className="mb-5">
-                      <p className="text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">Not Included</p>
-                      <ul className="space-y-1">
-                        {pkg.exclusions.map(ex => (
-                          <li key={ex} className="text-xs text-charcoal-muted">× {ex}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <Link
-                    to={`/events/book?package=${pkg._id}`}
-                    className={`block text-center text-xs py-3 uppercase tracking-wider font-bold transition-all ${
-                      pkg.badge === 'Most Popular' ? 'btn-primary' : 'btn-outline'
-                    }`}>
-                    Book This Package
-                  </Link>
+                    {pkg.inclusions?.length > 0 && (
+                      <div className="mb-4 flex-1">
+                        <p className="text-[10px] font-bold text-stone-600 uppercase tracking-wider mb-2">Includes</p>
+                        <ul className="space-y-1.5">
+                          {pkg.inclusions.map(inc => (
+                            <li key={inc} className="flex items-start gap-2 text-sm text-stone-600">
+                              <Check size={12} className="text-gold shrink-0 mt-0.5" /> {inc}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {pkg.exclusions?.length > 0 && (
+                      <div className="mb-5">
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Not Included</p>
+                        <ul className="space-y-1">
+                          {pkg.exclusions.map(ex => (
+                            <li key={ex} className="text-[11px] text-stone-400">× {ex}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <Link to={`/events/book?package=${pkg._id}`}
+                      className={`block text-center py-3 text-[10px] uppercase tracking-wider font-bold transition-all ${
+                        pkg.badge === 'Most Popular' ? 'btn-primary' : 'btn-outline'
+                      }`}>
+                      Book This Package
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
-        {/* Custom quote */}
-        <div className="mt-14 p-8 text-center text-white" style={{ borderRadius: 0, background: 'linear-gradient(135deg, #4A0F1D, #6B1A2B)' }}>
-          <h2 className="font-serif text-2xl mb-3">Need a Custom Package?</h2>
-          <p className="text-white/70 max-w-lg mx-auto mb-6">
-            Our events team can build a custom package tailored to your exact guest count, budget, venue preferences, and catering requirements.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link to="/events/book" className="btn-gold text-sm px-7">Request Custom Quote</Link>
-            <a href="tel:+917000000000" className="border-2 border-white/40 text-white px-6 py-3 font-semibold text-sm hover:bg-white/10 transition-all" style={{ borderRadius: 0 }}>
-              📞 Call Now
-            </a>
+      {/* ── CUSTOM QUOTE ── */}
+      <section className="section-md bg-white">
+        <div className="container-palace">
+          <div className="border border-stone-200 p-8 md:p-12 text-center relative">
+            <span className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-gold" />
+            <span className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-gold" />
+            <span className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-gold" />
+            <span className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-gold" />
+            <span className="eyebrow">Custom Packages</span>
+            <h2 className="font-serif text-2xl md:text-3xl text-maroon mb-3">Need Something Tailored?</h2>
+            <div className="gold-divider-center mb-5" />
+            <p className="text-stone-500 max-w-lg mx-auto text-sm md:text-base mb-7">
+              Our events team can build a custom package tailored to your exact guest count, budget, venue preferences, and catering requirements.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/events/book" className="btn-primary">Request Custom Quote</Link>
+              <a href="tel:+917000000000" className="btn-outline">
+                <Phone size={14} /> Call Now
+              </a>
+              <a href="https://wa.me/917000000000" className="btn-whatsapp">
+                <FaWhatsapp size={14} /> WhatsApp Us
+              </a>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* FAQ section for AEO */}
-        <div className="mt-14">
-          <h2 className="font-serif text-2xl font-semibold text-charcoal mb-6 text-center">Package FAQs</h2>
+      {/* ── FAQ ── */}
+      <section className="section-md" style={{ background: '#FAF7F2', borderTop: '1px solid #E8E0D8' }}>
+        <div className="container-palace">
+          <div className="text-center mb-10">
+            <span className="eyebrow">Common Questions</span>
+            <h2 className="section-title text-maroon">Package FAQs</h2>
+            <div className="gold-divider-center" />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
             {[
               ['What is the cheapest event package?', 'Birthday Bash starts at ₹25,000 for 150 guests. Silver Celebration is ₹45,000 for 200 guests.'],
-              ['Is catering included?', 'Catering is bundled in Royal Wedding (300 plates), Corporate Off-Site (snacks + lunch), and Grand Palace (unlimited). Other packages allow catering add-ons.'],
+              ['Is catering included in packages?', 'Catering is bundled in Royal Wedding (300 plates), Corporate Off-Site (snacks + lunch), and Grand Palace (unlimited). Other packages allow catering add-ons.'],
               ['Can I customise a package?', 'Absolutely. Contact our events team to build a package tailored to your guest count, venue, budget, and catering needs.'],
-              ['How far in advance should I book?', 'We recommend booking 3–6 months ahead for weddings (peak Oct–Feb) and 1–2 months for other events. Call or WhatsApp to check your date.'],
+              ['How far in advance should I book?', 'We recommend 3–6 months ahead for weddings (peak Oct–Feb) and 1–2 months for other events. Call or WhatsApp to check your date.'],
             ].map(([q, a]) => (
-              <div key={q} className="p-5 border border-stone-200" style={{ background: '#F2EDE4', borderRadius: 0 }}>
-                <p className="font-semibold text-charcoal text-sm mb-2">{q}</p>
-                <p className="text-sm text-charcoal-muted">{a}</p>
+              <div key={q} className="p-5 md:p-6 bg-white border border-stone-200 hover:border-gold/40 transition-colors">
+                <p className="font-serif text-base text-maroon font-semibold mb-2">{q}</p>
+                <p className="text-sm text-stone-500 leading-relaxed">{a}</p>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="section-md relative overflow-hidden" style={{ background: '#4A0F1D' }}>
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ backgroundImage: 'repeating-linear-gradient(45deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 50%)', backgroundSize: '28px 28px', opacity: 0.06 }} />
+        <span className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent)' }} />
+        <div className="relative z-10 container-palace text-center text-white">
+          <span className="eyebrow text-gold">Ready to Celebrate?</span>
+          <h2 className="font-serif font-bold mb-4"
+            style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
+            Book Your Event at Yashraj Palace
+          </h2>
+          <p className="text-white/60 max-w-xl mx-auto mb-8 text-sm md:text-base">
+            Fill out our inquiry form and our events team will call you within 2 hours with availability and a personalised quote.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to="/events/book" className="btn-gold btn-lg">Book an Event</Link>
+            <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg">
+              <FaWhatsapp size={14} /> WhatsApp Now
+            </a>
+          </div>
+          <p className="text-white/30 text-[11px] mt-6 uppercase tracking-wider">
+            500+ events hosted · Transparent pricing · Reply within 2 hours
+          </p>
+        </div>
+      </section>
     </>
   )
 }
