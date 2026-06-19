@@ -274,3 +274,72 @@
 /* ── PAGE TRANSITIONS ────────────────────────────────── */
 .page-enter { opacity: 0; transform: translateY(10px); }
 .page-enter-active { opacity: 1; transform: translateY(0); transition: opacity 300ms, transform 300ms; }
+
+/* ── GRAND CLASSIC: ORNAMENTAL BORDER ───────────────── */
+.ornamental-border {
+  position: relative;
+  border: 1px solid #C9A84C;
+  padding: 2rem;
+}
+.ornamental-border::before,
+.ornamental-border::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #C9A84C;
+}
+.ornamental-border::before {
+  top: -4px; left: -4px;
+  border-right: none; border-bottom: none;
+}
+.ornamental-border::after {
+  bottom: -4px; right: -4px;
+  border-left: none; border-top: none;
+}
+
+/* ── GRAND CLASSIC: SHARP BUTTONS ───────────────────── */
+.btn-gc-primary {
+  display: inline-block;
+  background-color: #6B1A2B;
+  color: #FAF7F2;
+  padding: 0.875rem 2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.btn-gc-primary:hover { background-color: #8A243A; }
+
+.btn-gc-gold {
+  display: inline-block;
+  background-color: #C9A84C;
+  color: #6B1A2B;
+  padding: 0.875rem 2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.btn-gc-gold:hover { background-color: #FAF7F2; }
+
+.btn-gc-outline {
+  display: inline-block;
+  background-color: transparent;
+  color: #6B1A2B;
+  padding: 0.875rem 2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border: 1px solid #6B1A2B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-gc-outline:hover { background-color: #6B1A2B; color: #FAF7F2; }
