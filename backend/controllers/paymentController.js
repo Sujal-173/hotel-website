@@ -5,10 +5,19 @@ const RoomBooking = require('../models/RoomBooking');
 const EventBooking = require('../models/EventBooking');
 const { Payment } = require('../models/index');
 
-const razorpay = new Razorpay({
-  key_id:     process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let _razorpay = null;
+function getRazorpay() {
+  if (!_razorpay) {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error('Razorpay keys not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.');
+    }
+    _razorpay = new Razorpay({
+      key_id:     process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+  }
+  return _razorpay;
+}
 
 // @desc  Create Razorpay order
 // @route POST /api/payments/create-order
@@ -25,7 +34,7 @@ const createOrder = asyncHandler(async (req, res) => {
     notes: { bookingId, bookingType, hotelName: 'Yashraj Palace' }
   };
 
-  const order = await razorpay.orders.create(options);
+  const order = await getRazorpay().orders.create(options);
 
   // Store payment record
   await Payment.create({
