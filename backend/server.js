@@ -97,6 +97,7 @@ app.use('/api/gallery',   require('./routes/galleryRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/admin',     require('./routes/adminRoutes'));
 app.use('/api/offers',    require('./routes/offerRoutes'));
+app.use('/api/settings',  require('./routes/settingsRoutes'));
 
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({

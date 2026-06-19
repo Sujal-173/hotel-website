@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async'
 import { eventsAPI } from '../utils/api'
 import { Check, Crown, Phone } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const STATIC_PACKAGES = [
   { _id:'s1', name:'Silver Celebration', category:'all',        price:45000,  capacity:{min:50,max:200},   duration:1, badge:'',             venue:'banquet',  inclusions:['Banquet hall access (6 hours)','Basic floral decoration','Sound system & mic setup','Parking for 40 vehicles','1 event coordination staff','Welcome banner'], exclusions:['Catering (priced separately)','Photography','Decoration beyond basics'] },
@@ -44,6 +45,7 @@ const FAQ_PACKAGES_SCHEMA = {
 const CATS = ['all','wedding','reception','engagement','birthday','corporate','family','cultural']
 
 export default function EventPackagesPage() {
+  const { phoneHref, waHref } = useSiteSettings()
   const [packages, setPackages] = useState([])
   const [filter, setFilter]     = useState('all')
   const [loading, setLoading]   = useState(true)
@@ -206,10 +208,10 @@ export default function EventPackagesPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link to="/events/book" className="btn-primary">Request Custom Quote</Link>
-              <a href="tel:+917000000000" className="btn-outline">
+              <a href={phoneHref} className="btn-outline">
                 <Phone size={14} /> Call Now
               </a>
-              <a href="https://wa.me/917000000000" className="btn-whatsapp">
+              <a href={waHref} className="btn-whatsapp">
                 <FaWhatsapp size={14} /> WhatsApp Us
               </a>
             </div>
@@ -258,7 +260,7 @@ export default function EventPackagesPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/events/book" className="btn-gold btn-lg">Book an Event</Link>
-            <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg">
+            <a href={waHref} className="btn-whatsapp btn-lg">
               <FaWhatsapp size={14} /> WhatsApp Now
             </a>
           </div>

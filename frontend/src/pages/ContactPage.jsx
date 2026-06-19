@@ -4,6 +4,7 @@ import { FiPhone, FiMail, FiMapPin, FiClock, FiSend, FiCheckCircle } from 'react
 import { FaWhatsapp, FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa'
 import { inquiriesAPI } from '../utils/api'
 import toast from 'react-hot-toast'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const CONTACT_SCHEMA = {
   '@context': 'https://schema.org',
@@ -28,32 +29,7 @@ const CONTACT_SCHEMA = {
   hasMap: 'https://maps.google.com/?q=Yashraj+Palace+Mandleshwar+Madhya+Pradesh',
 }
 
-const INFO_CARDS = [
-  {
-    icon: <FiPhone size={20} />,
-    label: 'Phone',
-    primary: '+91 70000 00000',
-    secondary: 'Available 9 AM – 10 PM daily',
-    href: 'tel:+917000000000',
-    accent: 'bg-maroon',
-  },
-  {
-    icon: <FaWhatsapp size={20} />,
-    label: 'WhatsApp',
-    primary: '+91 70000 00000',
-    secondary: 'Instant reply — bookings & directions',
-    href: 'https://wa.me/917000000000',
-    accent: 'bg-green-600',
-  },
-  {
-    icon: <FiMail size={20} />,
-    label: 'Email',
-    primary: 'info@yashrajpalace.com',
-    secondary: 'We reply within 4 hours',
-    href: 'mailto:info@yashrajpalace.com',
-    accent: 'bg-maroon',
-  },
-  {
+const MAP_CARD = {
     icon: <FiMapPin size={20} />,
     label: 'Address',
     primary: 'Near Mandleshwar, Khargone Dist.',
@@ -61,10 +37,16 @@ const INFO_CARDS = [
     href: 'https://maps.google.com/?q=Yashraj+Palace+Mandleshwar+Madhya+Pradesh',
     accent: 'bg-maroon',
     linkLabel: 'Open in Google Maps →',
-  },
-]
+}
 
 export default function ContactPage() {
+  const { phone, email, address, phoneHref, waHref, emailHref } = useSiteSettings()
+  const INFO_CARDS = [
+    { icon: <FiPhone size={20} />,    label: 'Phone',     primary: phone,   secondary: 'Available 9 AM – 10 PM daily',               href: phoneHref,  accent: 'bg-maroon' },
+    { icon: <FaWhatsapp size={20} />, label: 'WhatsApp',  primary: phone,   secondary: 'Instant reply — bookings & directions',        href: waHref,     accent: 'bg-green-600' },
+    { icon: <FiMail size={20} />,     label: 'Email',     primary: email,   secondary: 'We reply within 4 hours',                      href: emailHref,  accent: 'bg-maroon' },
+    { ...MAP_CARD, primary: address, href: 'https://maps.google.com/?q=Yashraj+Palace+Mandleshwar+Madhya+Pradesh' },
+  ]
   const [form, setForm]             = useState({ name:'', email:'', phone:'', subject:'', message:'', inquiryType:'general' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted]   = useState(false)

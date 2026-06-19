@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, X, Phone, Mail, MapPin, User, LogOut } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { useAuth } from '../../context/AuthContext'
+import { useSiteSettings } from '../../context/SiteSettingsContext'
 
 const navLinks = [
   { label: 'Stay',       to: '/rooms' },
@@ -19,6 +20,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const { user, logout, isAdmin } = useAuth()
   const navigate = useNavigate()
+  const { phone, email, address, phoneHref, waHref } = useSiteSettings()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -34,16 +36,16 @@ export default function Navbar() {
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5">
               <Phone size={12} className="text-gold" />
-              <a href="tel:+917000000000" className="hover:text-gold transition-colors">+91 70000 00000</a>
+              <a href={phoneHref} className="hover:text-gold transition-colors">{phone}</a>
             </span>
             <span className="flex items-center gap-1.5">
               <Mail size={12} className="text-gold" />
-              <a href="mailto:info@yashrajpalace.com" className="hover:text-gold transition-colors">info@yashrajpalace.com</a>
+              <a href={`mailto:${email}`} className="hover:text-gold transition-colors">{email}</a>
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-white/70">
             <MapPin size={12} className="text-gold" />
-            <span>Near Mandleshwar, Khargone District, Madhya Pradesh</span>
+            <span>{address}</span>
           </div>
         </div>
       </div>
@@ -166,7 +168,7 @@ export default function Navbar() {
                 className="border border-maroon text-maroon text-center text-xs font-bold uppercase tracking-[0.15em] py-3.5 hover:bg-maroon hover:text-white transition-colors">
                 Book Event
               </Link>
-              <a href="https://wa.me/917000000000" className="bg-green-500 text-white flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider py-3.5 rounded-sm hover:bg-green-600 transition-colors">
+              <a href={waHref} className="bg-green-500 text-white flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider py-3.5 rounded-sm hover:bg-green-600 transition-colors">
                 <FaWhatsapp size={15} /> WhatsApp Now
               </a>
             </div>

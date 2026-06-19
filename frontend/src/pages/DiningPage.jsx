@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Crown, Phone } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const MENU_HIGHLIGHTS = [
   { cat: 'Breakfast', emoji: '🌅', items: ['Poha & Jalebi', 'Paratha with Butter', 'Idli Sambar', 'Bread Toast & Eggs', 'Fresh Juice', 'Tea / Coffee'] },
@@ -44,6 +45,7 @@ const RESTAURANT_SCHEMA = {
 }
 
 export default function DiningPage() {
+  const { phoneHref, waHref } = useSiteSettings()
   return (
     <>
       <Helmet>
@@ -217,10 +219,10 @@ export default function DiningPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/book-room" className="btn-gold btn-lg">Book a Room</Link>
-            <a href="tel:+917000000000" className="btn-outline-gold btn-lg">
+            <a href={phoneHref} className="btn-outline-gold btn-lg">
               <Phone size={14} /> Call Us
             </a>
-            <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg">
+            <a href={waHref} className="btn-whatsapp btn-lg">
               <FaWhatsapp size={14} /> WhatsApp
             </a>
           </div>

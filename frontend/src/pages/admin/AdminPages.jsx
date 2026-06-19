@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { eventsAPI, roomsAPI, galleryAPI, reviewsAPI, inquiriesAPI, offersAPI, eventsAPI as pkgAPI } from '../../utils/api'
+import { eventsAPI, roomsAPI, galleryAPI, reviewsAPI, inquiriesAPI, offersAPI, settingsAPI } from '../../utils/api'
 import toast from 'react-hot-toast'
 import { FiEye, FiEdit2, FiTrash2, FiPlus, FiRefreshCw, FiCheck, FiX } from 'react-icons/fi'
 import {
@@ -687,25 +687,55 @@ export function AdminPackages() {
 
 // ─── SETTINGS ────────────────────────────────────────────────────────────────
 export function AdminSettings() {
-  const [saved, setSaved] = useState(false)
-  const [form, setForm]   = useState({
+  const [saved, setSaved]   = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [form, setForm]     = useState({
     hotelName: 'Yashraj Palace',
+    tagline: 'Heritage Meets Luxury',
     phone: '+91 70000 00000',
     whatsapp: '917000000000',
     email: 'info@yashrajpalace.com',
     address: 'Near Mandleshwar, Khargone District, Madhya Pradesh – 451221',
     checkIn: '12:00 PM',
     checkOut: '11:00 AM',
-    razorpayKey: '',
     tokenAmount: '10000',
     advancePercent: '30',
   })
 
-  const handleSave = (e) => {
+  useEffect(() => {
+    settingsAPI.get()
+      .then(r => {
+        const s = r.data.settings
+        setForm({
+          hotelName:      s.hotelName      || 'Yashraj Palace',
+          tagline:        s.tagline        || 'Heritage Meets Luxury',
+          phone:          s.phone          || '+91 70000 00000',
+          whatsapp:       s.whatsapp       || '917000000000',
+          email:          s.email          || 'info@yashrajpalace.com',
+          address:        s.address        || 'Near Mandleshwar, Khargone District, Madhya Pradesh – 451221',
+          checkIn:        s.checkIn        || '12:00 PM',
+          checkOut:       s.checkOut       || '11:00 AM',
+          tokenAmount:    String(s.tokenAmount    ?? 10000),
+          advancePercent: String(s.advancePercent ?? 30),
+        })
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleSave = async (e) => {
     e.preventDefault()
-    toast.success('Settings saved (configure in .env for production)')
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    setSaving(true)
+    try {
+      await settingsAPI.update(form)
+      toast.success('Settings saved — website updated instantly!')
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to save settings')
+    }
+    setSaving(false)
   }
 
   return (
@@ -736,13 +766,13 @@ export function AdminSettings() {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-4">
           <h2 className="font-semibold text-charcoal border-b border-gray-100 pb-3">Payment Gateway</h2>
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700">
-            ⚠️ Razorpay keys must be set in the backend <code className="font-mono">.env</code> file for security.
+            ⚠️ Razorpay keys must be set in the backend <code className="font-mono">.env</code> file for security — they cannot be changed from this panel.
           </div>
-          <div><label className="label">Razorpay Key ID (public)</label><input className="input-field" value={form.razorpayKey} onChange={e=>setForm(p=>({...p,razorpayKey:e.target.value}))} placeholder="rzp_live_…" /></div>
         </div>
 
-        <button type="submit" className={`btn-primary px-8 py-3 text-sm ${saved ? 'bg-green-500' : ''}`}>
-          {saved ? '✓ Saved!' : 'Save Settings'}
+        <button type="submit" disabled={saving || loading}
+          className={`btn-primary px-8 py-3 text-sm ${saved ? '!bg-green-500' : ''} disabled:opacity-60`}>
+          {saving ? 'Saving…' : saved ? '✓ Saved! Website updated.' : 'Save Settings'}
         </button>
       </form>
     </div>

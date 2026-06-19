@@ -117,6 +117,12 @@ export const offersAPI = {
   update:      (id, data)  => api.put(`/offers/admin/${id}`, data),
 }
 
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+export const settingsAPI = {
+  get:    ()     => api.get('/settings'),
+  update: (data) => api.put('/settings', data),
+}
+
 // ─── ADMIN ────────────────────────────────────────────────────────────────────
 export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard'),

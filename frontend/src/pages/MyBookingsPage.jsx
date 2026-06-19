@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async'
 import { bookingsAPI } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const STATUS_STYLES = {
   pending:     'bg-yellow-100 text-yellow-700',
@@ -16,6 +17,7 @@ const STATUS_STYLES = {
 
 export default function MyBookingsPage() {
   const { user }               = useAuth()
+  const { phoneHref, waHref }  = useSiteSettings()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading]  = useState(true)
   const [cancelling, setCancelling] = useState(null)
@@ -144,8 +146,8 @@ export default function MyBookingsPage() {
               <div className="text-xs text-charcoal-muted mt-0.5">Call or WhatsApp — 9 AM to 10 PM daily</div>
             </div>
             <div className="flex gap-2">
-              <a href="tel:+917000000000" className="btn-outline text-xs px-4 py-2">📞 Call</a>
-              <a href="https://wa.me/917000000000" className="btn-whatsapp text-xs px-4 py-2">💬 WhatsApp</a>
+              <a href={phoneHref} className="btn-outline text-xs px-4 py-2">📞 Call</a>
+              <a href={waHref} className="btn-whatsapp text-xs px-4 py-2">💬 WhatsApp</a>
             </div>
           </div>
         </div>

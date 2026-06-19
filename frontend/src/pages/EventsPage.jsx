@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { FaWhatsapp } from 'react-icons/fa'
 import { Check, ArrowRight, Phone, Users, Music, Utensils, ShieldCheck, Heart, Crown, Star } from 'lucide-react'
+import { useSiteSettings } from '../context/SiteSettingsContext'
 
 const EVENT_DETAILS = {
   wedding:    { title: 'Wedding',         icon: '💍', eyebrow: 'Dream Weddings',    desc: 'Your dream wedding, hosted with the grandeur it deserves. From the mandap to the feast — we handle every detail so you can simply be present.' },
@@ -83,6 +84,7 @@ const REVIEWS = [
 export default function EventsPage() {
   const { type } = useParams()
   const currentEvent = EVENT_DETAILS[type] || null
+  const { phoneHref, waHref } = useSiteSettings()
   const isWedding = type === 'wedding'
 
   const seoTitle = currentEvent
@@ -152,7 +154,7 @@ export default function EventsPage() {
 
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/events/book" className="btn-gold btn-lg">Book This Venue</Link>
-            <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg">
+            <a href={waHref} className="btn-whatsapp btn-lg">
               <FaWhatsapp size={15} /> WhatsApp Us
             </a>
           </div>
@@ -232,7 +234,7 @@ export default function EventsPage() {
                 <div className="flex flex-wrap gap-3">
                   <Link to="/events/book?type=wedding" className="btn-primary">Book Wedding Venue</Link>
                   <Link to="/events/packages" className="btn-outline">View Packages</Link>
-                  <a href="https://wa.me/917000000000" className="btn-whatsapp"><FaWhatsapp size={14} /> WhatsApp</a>
+                  <a href={waHref} className="btn-whatsapp"><FaWhatsapp size={14} /> WhatsApp</a>
                 </div>
               </div>
             </div>
@@ -439,10 +441,10 @@ export default function EventsPage() {
             <Link to="/events/book" className="btn-gold btn-lg">
               {isWedding ? 'Book Wedding Venue' : 'Book This Venue'}
             </Link>
-            <a href="tel:+917000000000" className="btn-outline-gold btn-lg">
+            <a href={phoneHref} className="btn-outline-gold btn-lg">
               <Phone size={14} /> Call Directly
             </a>
-            <a href="https://wa.me/917000000000" className="btn-whatsapp btn-lg">
+            <a href={waHref} className="btn-whatsapp btn-lg">
               <FaWhatsapp size={14} /> WhatsApp Now
             </a>
           </div>

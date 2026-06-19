@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FaWhatsapp, FaFacebook, FaInstagram, FaGoogle } from 'react-icons/fa'
 import { MapPin, Phone, Mail } from 'lucide-react'
+import { useSiteSettings } from '../../context/SiteSettingsContext'
 
 const footerLinks = {
   Stay: [
@@ -49,6 +50,7 @@ function ColumnHeading({ children }) {
 }
 
 export default function Footer() {
+  const { phone, email, address, phoneHref, waHref, emailHref } = useSiteSettings()
   return (
     <footer className="bg-[#1A1A1A] text-stone-300 border-t-4 border-maroon" aria-label="Site footer">
 
@@ -60,11 +62,11 @@ export default function Footer() {
             <p className="text-white/65 text-sm mt-0.5">Call or WhatsApp us — we reply within minutes.</p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <a href="https://wa.me/917000000000"
+            <a href={waHref}
               className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-wider transition-colors">
               <FaWhatsapp size={15} /> WhatsApp Now
             </a>
-            <a href="tel:+917000000000"
+            <a href={phoneHref}
               className="border border-white/40 text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center gap-2">
               <Phone size={13} /> Call Us
             </a>
@@ -88,22 +90,22 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-stone-400 mb-6">
               <li className="flex items-start gap-2.5">
                 <MapPin size={14} className="text-gold mt-0.5 shrink-0" />
-                <span>Near Mandleshwar, Khargone District,<br />Madhya Pradesh – 451221</span>
+                <span>{address}</span>
               </li>
               <li>
-                <a href="tel:+917000000000" className="flex items-center gap-2.5 hover:text-white transition-colors">
-                  <Phone size={14} className="text-gold shrink-0" /> +91 70000 00000
+                <a href={phoneHref} className="flex items-center gap-2.5 hover:text-white transition-colors">
+                  <Phone size={14} className="text-gold shrink-0" /> {phone}
                 </a>
               </li>
               <li>
-                <a href="mailto:info@yashrajpalace.com" className="flex items-center gap-2.5 hover:text-white transition-colors">
-                  <Mail size={14} className="text-gold shrink-0" /> info@yashrajpalace.com
+                <a href={emailHref} className="flex items-center gap-2.5 hover:text-white transition-colors">
+                  <Mail size={14} className="text-gold shrink-0" /> {email}
                 </a>
               </li>
             </ul>
             <div className="flex gap-3">
               {[
-                { href: 'https://wa.me/917000000000',          icon: <FaWhatsapp size={14} />, label: 'WhatsApp' },
+                { href: waHref,                                 icon: <FaWhatsapp size={14} />, label: 'WhatsApp' },
                 { href: 'https://facebook.com/yashrajpalace',  icon: <FaFacebook size={14} />, label: 'Facebook' },
                 { href: 'https://instagram.com/yashrajpalace', icon: <FaInstagram size={14} />, label: 'Instagram' },
                 { href: 'https://g.page/yashrajpalace',        icon: <FaGoogle size={14} />,    label: 'Google' },
