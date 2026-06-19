@@ -1,5 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { Review, Gallery, Inquiry, Offer } = require('../models/index');
+const { sendAdminNewInquiryAlert } = require('../utils/emailService');
+const socket = require('../utils/socket');
 
 // ─── REVIEWS ────────────────────────────────────────────────────────────────
 
@@ -56,6 +58,18 @@ const deleteGalleryImage = asyncHandler(async (req, res) => {
 
 const createInquiry = asyncHandler(async (req, res) => {
   const inquiry = await Inquiry.create(req.body);
+
+  // Real-time admin notification
+  socket.emitToAdmin('new_inquiry', {
+    name: inquiry.name,
+    phone: inquiry.phone,
+    inquiryType: inquiry.inquiryType,
+    createdAt: inquiry.createdAt,
+  });
+
+  // Admin email alert (non-blocking)
+  sendAdminNewInquiryAlert(inquiry).catch(console.error);
+
   res.status(201).json({ success: true, inquiry, message: 'Thank you! We will contact you shortly.' });
 });
 

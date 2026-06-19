@@ -343,3 +343,55 @@
   transition: all 0.2s ease;
 }
 .btn-gc-outline:hover { background-color: #6B1A2B; color: #FAF7F2; }
+
+/* ── MOBILE RESPONSIVE FIXES ────────────────────────── */
+@media (max-width: 640px) {
+  /* Hero section — reduce padding on small screens */
+  .hero-ornamental-frame { padding: 1.5rem !important; }
+
+  /* Trust bar — don't pull it UP on mobile (overlaps hero) */
+  .trust-bar-float { margin-top: 0 !important; margin-left: 0 !important; margin-right: 0 !important; }
+
+  /* Section headings — smaller on mobile */
+  .section-title { font-size: 1.75rem !important; }
+
+  /* Page hero — reduce padding */
+  .page-hero { padding-top: 5rem !important; padding-bottom: 5rem !important; }
+
+  /* Admin sidebar — ensure full width close button is reachable */
+  .admin-nav-label { font-size: 0.8125rem; }
+
+  /* Booking widget — full width on mobile */
+  .booking-widget { max-width: 100% !important; }
+
+  /* Contact form grid — single column on very small screens */
+  .contact-grid-2 { grid-template-columns: 1fr !important; }
+}
+
+/* Floating WhatsApp button */
+.wa-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  width: 3.25rem;
+  height: 3.25rem;
+  background-color: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+.wa-float:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 28px rgba(37,211,102,0.55);
+}
+@keyframes wa-pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.45); }
+  50%       { box-shadow: 0 4px 28px rgba(37,211,102,0.65), 0 0 0 8px rgba(37,211,102,0.12); }
+}
+.wa-float { animation: wa-pulse 2.5s ease-in-out infinite; }

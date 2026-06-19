@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import { Toaster } from 'react-hot-toast'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
+import { SocketProvider } from './context/SocketContext'
 import './styles/index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -12,15 +13,17 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
       <BrowserRouter>
         <AuthProvider>
-          <App />
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: { fontFamily: 'Inter, sans-serif', fontSize: '14px' },
-              success: { iconTheme: { primary: '#6B1A2B', secondary: '#FAF7F2' } },
-            }}
-          />
+          <SocketProvider>
+            <App />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: { fontFamily: 'Inter, sans-serif', fontSize: '14px' },
+                success: { iconTheme: { primary: '#6B1A2B', secondary: '#FAF7F2' } },
+              }}
+            />
+          </SocketProvider>
         </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>

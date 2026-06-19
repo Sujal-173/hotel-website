@@ -166,10 +166,10 @@ export default function HomePage() {
         />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(107,26,43,0.92) 0%, rgba(107,26,43,0.6) 55%, transparent 100%)' }} />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 w-full flex flex-col lg:flex-row items-center gap-12">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 w-full flex flex-col lg:flex-row items-center gap-8 md:gap-12">
           {/* Left: headline with ornamental frame */}
-          <div className="lg:w-1/2 text-white animate-fade-in-up">
-            <div className="relative border border-gold/40 p-8 md:p-12 backdrop-blur-sm bg-maroon/20">
+          <div className="lg:w-1/2 w-full text-white animate-fade-in-up">
+            <div className="relative border border-gold/40 p-6 md:p-10 xl:p-12 backdrop-blur-sm bg-maroon/20">
               {/* Corner brackets */}
               <span className="absolute top-0 left-0 w-7 h-7 border-t-2 border-l-2 border-gold -translate-x-2 -translate-y-2" />
               <span className="absolute top-0 right-0 w-7 h-7 border-t-2 border-r-2 border-gold translate-x-2 -translate-y-2" />
@@ -331,7 +331,7 @@ export default function HomePage() {
       </section>
 
       {/* ── TRUST BAR ─────────────────────────────────────────────── */}
-      <div className="relative z-20 -mt-8 mx-4 md:mx-12 lg:mx-24 bg-[#FAF7F2] border border-gold/30 shadow-2xl py-7">
+      <div className="relative z-20 mt-0 md:-mt-8 mx-0 md:mx-8 lg:mx-24 bg-[#FAF7F2] border border-gold/30 shadow-2xl py-6 md:py-7">
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
             {[

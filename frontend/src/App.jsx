@@ -1,7 +1,8 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import Navbar from './components/common/Navbar'
 import Footer from './components/common/Footer'
+import { FaWhatsapp } from 'react-icons/fa'
 
 // Public pages
 import HomePage              from './pages/HomePage'
@@ -50,6 +51,16 @@ const PublicLayout = ({ children }) => (
     <Navbar />
     <main className="flex-1">{children}</main>
     <Footer />
+    <a
+      href="https://wa.me/917000000000"
+      target="_blank"
+      rel="noreferrer"
+      className="wa-float"
+      aria-label="Chat on WhatsApp"
+      title="Chat on WhatsApp"
+    >
+      <FaWhatsapp size={26} color="white" />
+    </a>
   </div>
 )
 

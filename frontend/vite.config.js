@@ -5,6 +5,9 @@ const replitDomain = process.env.REPLIT_DEV_DOMAIN
 
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'socket.io-client'],
+  },
   server: {
     host: '0.0.0.0',
     port: 5000,
@@ -21,7 +24,12 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-      }
+      },
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        ws: true,
+      },
     }
   }
 })

@@ -1,7 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const EventBooking = require('../models/EventBooking');
 const EventPackage = require('../models/EventPackage');
-const { sendEventInquiryConfirmation } = require('../utils/emailService');
+const { sendEventInquiryConfirmation, sendAdminNewEventAlert } = require('../utils/emailService');
+const socket = require('../utils/socket');
 
 // @desc  Create event booking / inquiry
 // @route POST /api/events/book
@@ -42,7 +43,19 @@ const createEventBooking = asyncHandler(async (req, res) => {
 
   await booking.populate('package', 'name category capacity');
 
+  // Real-time admin notification
+  socket.emitToAdmin('new_event', {
+    bookingId: booking.bookingId,
+    guestName: contactDetails?.name,
+    eventType,
+    eventDate: eventDetails?.eventDate,
+    guestCount: eventDetails?.guestCount,
+    createdAt: booking.createdAt,
+  });
+
+  // Emails (non-blocking)
   sendEventInquiryConfirmation(booking).catch(console.error);
+  sendAdminNewEventAlert(booking).catch(console.error);
 
   res.status(201).json({ success: true, booking, message: 'Inquiry received. Our team will contact you within 2 hours.' });
 });
@@ -111,6 +124,9 @@ const updateEventStatus = asyncHandler(async (req, res) => {
     { new: true }
   ).populate('package', 'name');
   if (!booking) { res.status(404); throw new Error('Event booking not found'); }
+
+  socket.emitToAdmin('event_updated', { bookingId: booking.bookingId, status });
+
   res.json({ success: true, booking });
 });
 

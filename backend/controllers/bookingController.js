@@ -1,7 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const RoomBooking = require('../models/RoomBooking');
 const Room = require('../models/Room');
-const { sendBookingConfirmation } = require('../utils/emailService');
+const { sendBookingConfirmation, sendAdminNewBookingAlert } = require('../utils/emailService');
+const socket = require('../utils/socket');
 
 // @desc  Create room booking
 // @route POST /api/bookings
@@ -43,8 +44,18 @@ const createBooking = asyncHandler(async (req, res) => {
 
   await booking.populate('room', 'name type images');
 
-  // Send confirmation email (non-blocking)
+  // Real-time admin notification
+  socket.emitToAdmin('new_booking', {
+    bookingId: booking.bookingId,
+    guestName: guestDetails?.name,
+    room: room.name,
+    amount: totalAmount,
+    createdAt: booking.createdAt,
+  });
+
+  // Emails (non-blocking)
   sendBookingConfirmation(booking).catch(console.error);
+  sendAdminNewBookingAlert(booking).catch(console.error);
 
   res.status(201).json({ success: true, booking, advanceToPay: advancePaid });
 });
@@ -60,10 +71,8 @@ const getMyBookings = asyncHandler(async (req, res) => {
 
 // @desc  Get single booking
 // @route GET /api/bookings/:id
-const getBooking = asyncHandler(async (req, res) => {
-  const booking = await RoomBooking.findOne({
-    $or: [{ _id: req.params.id }, { bookingId: req.params.id }]
-  }).populate('room', 'name type images price policies');
+const getBookingById = asyncHandler(async (req, res) => {
+  const booking = await RoomBooking.findById(req.params.id).populate('room', 'name type images price');
   if (!booking) { res.status(404); throw new Error('Booking not found'); }
   res.json({ success: true, booking });
 });
@@ -71,29 +80,28 @@ const getBooking = asyncHandler(async (req, res) => {
 // @desc  Cancel booking
 // @route PUT /api/bookings/:id/cancel
 const cancelBooking = asyncHandler(async (req, res) => {
-  const booking = await RoomBooking.findOne({ bookingId: req.params.id });
+  const booking = await RoomBooking.findById(req.params.id);
   if (!booking) { res.status(404); throw new Error('Booking not found'); }
-  if (['cancelled', 'checked_out'].includes(booking.status)) {
-    res.status(400); throw new Error('Booking cannot be cancelled');
-  }
+  if (booking.user?.toString() !== req.user._id.toString()) { res.status(403); throw new Error('Not authorised'); }
   booking.status = 'cancelled';
-  booking.cancellationReason = req.body.reason || 'Cancelled by guest';
-  booking.cancelledAt = new Date();
+  booking.cancellationReason = req.body.reason;
   await booking.save();
-  res.json({ success: true, message: 'Booking cancelled successfully', booking });
+  res.json({ success: true, message: 'Booking cancelled', booking });
 });
 
-// @desc  Admin - Get all bookings
+// ── ADMIN ──────────────────────────────────────────────────────────────────────
+
+// @desc  Get all bookings (admin)
 // @route GET /api/bookings/admin/all
 const getAllBookings = asyncHandler(async (req, res) => {
-  const { status, page = 1, limit = 20, search } = req.query;
+  const { page = 1, limit = 15, status, search } = req.query;
   const query = {};
   if (status) query.status = status;
   if (search) {
     query.$or = [
       { bookingId: { $regex: search, $options: 'i' } },
       { 'guestDetails.name': { $regex: search, $options: 'i' } },
-      { 'guestDetails.phone': { $regex: search, $options: 'i' } }
+      { 'guestDetails.phone': { $regex: search, $options: 'i' } },
     ];
   }
   const total = await RoomBooking.countDocuments(query);
@@ -101,21 +109,25 @@ const getAllBookings = asyncHandler(async (req, res) => {
     .populate('room', 'name type')
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
-    .limit(parseInt(limit));
-  res.json({ success: true, total, page: parseInt(page), pages: Math.ceil(total / limit), bookings });
+    .limit(Number(limit));
+  res.json({ success: true, bookings, total, page: Number(page), pages: Math.ceil(total / limit) });
 });
 
-// @desc  Admin - Update booking status
+// @desc  Update booking status (admin)
 // @route PUT /api/bookings/admin/:id/status
 const updateBookingStatus = asyncHandler(async (req, res) => {
-  const { status, notes } = req.body;
+  const { status, adminNotes } = req.body;
   const booking = await RoomBooking.findByIdAndUpdate(
     req.params.id,
-    { status, notes, ...(status === 'confirmed' && { confirmedAt: new Date() }) },
+    { status, ...(adminNotes && { adminNotes }) },
     { new: true }
   ).populate('room', 'name type');
+
   if (!booking) { res.status(404); throw new Error('Booking not found'); }
+
+  socket.emitToAdmin('booking_updated', { bookingId: booking.bookingId, status });
+
   res.json({ success: true, booking });
 });
 
-module.exports = { createBooking, getMyBookings, getBooking, cancelBooking, getAllBookings, updateBookingStatus };
+module.exports = { createBooking, getMyBookings, getBooking: getBookingById, cancelBooking, getAllBookings, updateBookingStatus };
