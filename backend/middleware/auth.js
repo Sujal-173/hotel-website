@@ -25,8 +25,9 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
+// Admin-only: role must be exactly 'admin'
 const admin = (req, res, next) => {
-  if (req.user && (req.user.role === 'admin' || req.user.role === 'staff')) {
+  if (req.user && req.user.role === 'admin') {
     next();
   } else {
     res.status(403);
@@ -34,15 +35,16 @@ const admin = (req, res, next) => {
   }
 };
 
-const superAdmin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+// Staff or admin: can manage bookings and inquiries but not payments/pricing/settings
+const staff = (req, res, next) => {
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'staff')) {
     next();
   } else {
     res.status(403);
-    throw new Error('Not authorized as super admin');
+    throw new Error('Staff or admin access required');
   }
 };
 
-const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '30d' });
 
-module.exports = { protect, admin, superAdmin, generateToken };
+module.exports = { protect, admin, staff, generateToken };

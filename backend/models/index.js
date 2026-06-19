@@ -1,25 +1,31 @@
 const mongoose = require('mongoose');
 
-// Payment Model
+// ─── Payment Model ─────────────────────────────────────────────────────────────
 const paymentSchema = new mongoose.Schema({
-  paymentId:       { type: String, unique: true },
-  razorpayPaymentId: String,
-  razorpayOrderId:   String,
-  razorpaySignature: String,
-  bookingRef:      String,
-  bookingType:     { type: String, enum: ['room', 'event'] },
-  amount:          { type: Number, required: true },
-  currency:        { type: String, default: 'INR' },
-  status:          { type: String, enum: ['created', 'captured', 'failed', 'refunded'], default: 'created' },
-  method:          String,
-  user:            { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  notes:           mongoose.Schema.Types.Mixed,
-  refundId:        String,
-  refundAmount:    Number,
-  refundedAt:      Date,
+  paymentId:          { type: String, unique: true },
+  razorpayPaymentId:  String,
+  razorpayOrderId:    String,
+  razorpaySignature:  String,
+  bookingRef:         String,
+  bookingType:        { type: String, enum: ['room', 'event'] },
+  amount:             { type: Number, required: true },
+  currency:           { type: String, default: 'INR' },
+  status:             { type: String, enum: ['created', 'captured', 'failed', 'refunded'], default: 'created' },
+  method:             String,
+  user:               { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  notes:              mongoose.Schema.Types.Mixed,
+  refundId:           String,
+  refundAmount:       Number,
+  refundedAt:         Date,
 }, { timestamps: true });
 
-// Review Model
+// Index for webhook lookups and admin queries
+paymentSchema.index({ razorpayOrderId: 1 });
+paymentSchema.index({ razorpayPaymentId: 1 });
+paymentSchema.index({ bookingRef: 1, bookingType: 1 });
+paymentSchema.index({ status: 1, createdAt: -1 });
+
+// ─── Review Model ──────────────────────────────────────────────────────────────
 const reviewSchema = new mongoose.Schema({
   name:       { type: String, required: true },
   email:      { type: String, required: true },
@@ -37,42 +43,50 @@ const reviewSchema = new mongoose.Schema({
   booking:    { type: mongoose.Schema.Types.ObjectId, ref: 'RoomBooking' },
 }, { timestamps: true });
 
-// Gallery Model
+reviewSchema.index({ isApproved: 1, isActive: 1, createdAt: -1 });
+reviewSchema.index({ isFeatured: 1, isApproved: 1 });
+
+// ─── Gallery Model ─────────────────────────────────────────────────────────────
 const gallerySchema = new mongoose.Schema({
-  title:       String,
-  url:         { type: String, required: true },
-  thumbnail:   String,
+  title:      String,
+  url:        { type: String, required: true },
+  thumbnail:  String,
   category: {
     type: String,
     enum: ['rooms', 'weddings', 'garden', 'banquet', 'food', 'property', 'events'],
-    required: true
+    required: true,
   },
-  alt:         String,
-  caption:     String,
-  isFeatured:  { type: Boolean, default: false },
-  isActive:    { type: Boolean, default: true },
-  sortOrder:   { type: Number, default: 0 },
-  uploadedBy:  { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  alt:        String,
+  caption:    String,
+  isFeatured: { type: Boolean, default: false },
+  isActive:   { type: Boolean, default: true },
+  sortOrder:  { type: Number, default: 0 },
+  uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 
-// Contact Inquiry Model
+gallerySchema.index({ category: 1, isActive: 1, sortOrder: 1 });
+
+// ─── Contact Inquiry Model ─────────────────────────────────────────────────────
 const inquirySchema = new mongoose.Schema({
-  name:       { type: String, required: true },
-  email:      { type: String, required: true },
-  phone:      { type: String, required: true },
-  subject:    String,
-  message:    { type: String, required: true },
-  inquiryType:{ type: String, enum: ['general', 'room', 'event', 'wedding', 'corporate', 'other'], default: 'general' },
-  eventDate:  Date,
-  guestCount: Number,
-  status:     { type: String, enum: ['new', 'contacted', 'quoted', 'converted', 'closed'], default: 'new' },
-  assignedTo: String,
-  followUpDate: Date,
-  adminNotes: String,
-  isRead:     { type: Boolean, default: false },
+  name:        { type: String, required: true },
+  email:       { type: String, required: true },
+  phone:       { type: String, required: true },
+  subject:     String,
+  message:     { type: String, required: true },
+  inquiryType: { type: String, enum: ['general', 'room', 'event', 'wedding', 'corporate', 'other'], default: 'general' },
+  eventDate:   Date,
+  guestCount:  Number,
+  status:      { type: String, enum: ['new', 'contacted', 'quoted', 'converted', 'closed'], default: 'new' },
+  assignedTo:  String,
+  followUpDate:Date,
+  adminNotes:  String,
+  isRead:      { type: Boolean, default: false },
 }, { timestamps: true });
 
-// Offer Model
+inquirySchema.index({ status: 1, createdAt: -1 });
+inquirySchema.index({ isRead: 1 });
+
+// ─── Offer Model ───────────────────────────────────────────────────────────────
 const offerSchema = new mongoose.Schema({
   title:       { type: String, required: true },
   description: String,
@@ -89,10 +103,13 @@ const offerSchema = new mongoose.Schema({
   isActive:    { type: Boolean, default: true },
 }, { timestamps: true });
 
-const Payment  = mongoose.model('Payment', paymentSchema);
-const Review   = mongoose.model('Review', reviewSchema);
-const Gallery  = mongoose.model('Gallery', gallerySchema);
-const Inquiry  = mongoose.model('Inquiry', inquirySchema);
-const Offer    = mongoose.model('Offer', offerSchema);
+// Index for fast promo code validation
+offerSchema.index({ code: 1, isActive: 1 });
+
+const Payment  = mongoose.model('Payment',  paymentSchema);
+const Review   = mongoose.model('Review',   reviewSchema);
+const Gallery  = mongoose.model('Gallery',  gallerySchema);
+const Inquiry  = mongoose.model('Inquiry',  inquirySchema);
+const Offer    = mongoose.model('Offer',    offerSchema);
 
 module.exports = { Payment, Review, Gallery, Inquiry, Offer };

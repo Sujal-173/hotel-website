@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const asyncHandler = require('express-async-handler');
 const EventBooking = require('../models/EventBooking');
 const EventPackage = require('../models/EventPackage');
@@ -9,26 +10,68 @@ const socket = require('../utils/socket');
 const createEventBooking = asyncHandler(async (req, res) => {
   const { packageId, eventType, contactDetails, eventDetails, selectedAddOns } = req.body;
 
-  let packageData = null;
+  const eventDate = new Date(eventDetails?.eventDate);
+  if (eventDate < new Date()) {
+    res.status(400); throw new Error('Event date cannot be in the past');
+  }
+
+  // Package lookup and capacity validation
+  let packageData  = null;
   let packagePrice = 0;
+
   if (packageId) {
     packageData = await EventPackage.findById(packageId);
-    if (!packageData) { res.status(404); throw new Error('Package not found'); }
+    if (!packageData || !packageData.isActive) {
+      res.status(404); throw new Error('Event package not found');
+    }
+
+    // ── Capacity validation ──────────────────────────────────────────────────
+    const guestCount = parseInt(eventDetails?.guestCount, 10);
+    if (guestCount < packageData.capacity.min) {
+      res.status(400);
+      throw new Error(`This package requires a minimum of ${packageData.capacity.min} guests`);
+    }
+    if (guestCount > packageData.capacity.max) {
+      res.status(400);
+      throw new Error(`This package supports a maximum of ${packageData.capacity.max} guests. Please contact us for a custom quote.`);
+    }
+
     packagePrice = packageData.price;
   }
 
-  const addOnsTotal = (selectedAddOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
-  const subtotal = packagePrice + addOnsTotal;
-  const taxes = Math.round(subtotal * 0.12);
-  const totalEstimate = subtotal + taxes;
+  // ── Event date conflict check ────────────────────────────────────────────────
+  // Block if the same venue is confirmed or advance_paid OR has an active quote_sent
+  const dateStart = new Date(eventDate); dateStart.setHours(0,  0,  0,   0);
+  const dateEnd   = new Date(eventDate); dateEnd.setHours(23, 59, 59, 999);
+
+  const venueConflict = await EventBooking.findOne({
+    'eventDetails.eventDate': { $gte: dateStart, $lte: dateEnd },
+    ...(packageData?.venue ? { 'eventDetails.venue': packageData.venue } : {}),
+    status: { $in: ['confirmed', 'advance_paid', 'quote_sent'] },
+  });
+
+  // For quote_sent, soft-warn but don't hard-block (inquiry still goes through)
+  const isProvisionallyHeld = venueConflict?.status === 'quote_sent';
+  const isHardConflict      = venueConflict && !isProvisionallyHeld;
+
+  if (isHardConflict) {
+    res.status(409);
+    throw new Error('This date is already booked. Please choose a different date or contact us for availability.');
+  }
+
+  // ── Pricing ─────────────────────────────────────────────────────────────────
+  const addOnsTotal    = (selectedAddOns || []).reduce((s, a) => s + (a.price * (a.quantity || 1)), 0);
+  const subtotal       = packagePrice + addOnsTotal;
+  const taxes          = Math.round(subtotal * 0.12);
+  const totalEstimate  = subtotal + taxes;
 
   const booking = await EventBooking.create({
     package: packageId || undefined,
     eventType,
     contactDetails,
-    eventDetails,
+    eventDetails: { ...eventDetails, venue: packageData?.venue },
     selectedAddOns: selectedAddOns || [],
-    user: req.user?._id,
+    user: req.user?._id || undefined,
     pricing: {
       packagePrice,
       addOnsTotal,
@@ -38,10 +81,10 @@ const createEventBooking = asyncHandler(async (req, res) => {
       balanceDue: totalEstimate - 10000,
       isCustomQuote: !packageId,
     },
-    status: 'inquiry'
+    status: 'inquiry',
   });
 
-  await booking.populate('package', 'name category capacity');
+  await booking.populate('package', 'name category capacity venue');
 
   // Real-time admin notification
   socket.emitToAdmin('new_event', {
@@ -53,28 +96,58 @@ const createEventBooking = asyncHandler(async (req, res) => {
     createdAt: booking.createdAt,
   });
 
-  // Emails (non-blocking)
   sendEventInquiryConfirmation(booking).catch(console.error);
   sendAdminNewEventAlert(booking).catch(console.error);
 
-  res.status(201).json({ success: true, booking, message: 'Inquiry received. Our team will contact you within 2 hours.' });
+  res.status(201).json({
+    success: true,
+    booking,
+    message: isProvisionallyHeld
+      ? 'Inquiry received. Note: this date has a pending quote. Our team will contact you within 2 hours to confirm availability.'
+      : 'Inquiry received. Our team will contact you within 2 hours.',
+  });
 });
 
 // @desc  Check event date availability
 // @route POST /api/events/check-date
 const checkEventDate = asyncHandler(async (req, res) => {
   const { date, venue } = req.body;
+  if (!date) { res.status(400); throw new Error('Date is required'); }
+
   const eventDate = new Date(date);
-  const dateStart = new Date(eventDate); dateStart.setHours(0,0,0,0);
-  const dateEnd   = new Date(eventDate); dateEnd.setHours(23,59,59,999);
+  const dateStart = new Date(eventDate); dateStart.setHours(0,  0,  0,   0);
+  const dateEnd   = new Date(eventDate); dateEnd.setHours(23, 59, 59, 999);
 
-  const existing = await EventBooking.find({
+  const query = {
     'eventDetails.eventDate': { $gte: dateStart, $lte: dateEnd },
-    status: { $in: ['confirmed', 'advance_paid'] }
-  }).select('eventDetails.venue eventDetails.guestCount status');
+    status: { $in: ['confirmed', 'advance_paid'] },
+  };
+  if (venue) query['eventDetails.venue'] = venue;
 
-  const available = existing.length === 0;
-  res.json({ success: true, available, existingEvents: existing.length, message: available ? 'Date is available!' : 'Date already booked. Please choose another date.' });
+  const existing = await EventBooking.countDocuments(query);
+
+  // Also check provisional holds
+  const provisionalQuery = {
+    'eventDetails.eventDate': { $gte: dateStart, $lte: dateEnd },
+    status: 'quote_sent',
+    updatedAt: { $gte: new Date(Date.now() - 72 * 60 * 60 * 1000) },
+  };
+  if (venue) provisionalQuery['eventDetails.venue'] = venue;
+  const provisional = await EventBooking.countDocuments(provisionalQuery);
+
+  const fullyBooked = existing > 0;
+  const provisionallyHeld = !fullyBooked && provisional > 0;
+
+  res.json({
+    success: true,
+    available: !fullyBooked,
+    provisionallyHeld,
+    message: fullyBooked
+      ? 'This date is already booked. Please choose another date.'
+      : provisionallyHeld
+        ? 'This date has a pending quote. Contact us to confirm availability.'
+        : 'This date is available!',
+  });
 });
 
 // @desc  Get event packages
@@ -87,6 +160,8 @@ const getEventPackages = asyncHandler(async (req, res) => {
   res.json({ success: true, packages });
 });
 
+// ── ADMIN ──────────────────────────────────────────────────────────────────────
+
 // @desc  Admin - Get all event bookings
 // @route GET /api/events/admin/all
 const getAllEventBookings = asyncHandler(async (req, res) => {
@@ -96,11 +171,11 @@ const getAllEventBookings = asyncHandler(async (req, res) => {
   if (search) {
     query.$or = [
       { bookingId: { $regex: search, $options: 'i' } },
-      { 'contactDetails.name': { $regex: search, $options: 'i' } },
-      { 'contactDetails.phone': { $regex: search, $options: 'i' } }
+      { 'contactDetails.name':  { $regex: search, $options: 'i' } },
+      { 'contactDetails.phone': { $regex: search, $options: 'i' } },
     ];
   }
-  const total = await EventBooking.countDocuments(query);
+  const total    = await EventBooking.countDocuments(query);
   const bookings = await EventBooking.find(query)
     .populate('package', 'name')
     .sort({ createdAt: -1 })
@@ -113,16 +188,23 @@ const getAllEventBookings = asyncHandler(async (req, res) => {
 // @route PUT /api/events/admin/:id/status
 const updateEventStatus = asyncHandler(async (req, res) => {
   const { status, adminNotes, totalEstimate, followUpDate } = req.body;
-  const booking = await EventBooking.findByIdAndUpdate(
-    req.params.id,
-    {
-      status, adminNotes,
-      ...(totalEstimate && { 'pricing.totalEstimate': totalEstimate }),
-      ...(followUpDate && { followUpDate }),
-      ...(status === 'confirmed' && { confirmedAt: new Date() })
-    },
-    { new: true }
-  ).populate('package', 'name');
+
+  const allowedStatuses = ['inquiry', 'quote_sent', 'confirmed', 'advance_paid', 'completed', 'cancelled'];
+  if (!allowedStatuses.includes(status)) {
+    res.status(400); throw new Error('Invalid status value');
+  }
+
+  const update = {
+    status,
+    ...(adminNotes     && { adminNotes }),
+    ...(totalEstimate  && { 'pricing.totalEstimate': totalEstimate, 'pricing.balanceDue': totalEstimate - 10000 }),
+    ...(followUpDate   && { followUpDate }),
+    ...(status === 'confirmed'    && { confirmedAt: new Date() }),
+    ...(status === 'cancelled'    && { cancelledAt: new Date() }),
+  };
+
+  const booking = await EventBooking.findByIdAndUpdate(req.params.id, update, { new: true })
+    .populate('package', 'name');
   if (!booking) { res.status(404); throw new Error('Event booking not found'); }
 
   socket.emitToAdmin('event_updated', { bookingId: booking.bookingId, status });

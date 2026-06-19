@@ -4,7 +4,6 @@ import { paymentsAPI } from '../utils/api'
 
 export const useRazorpay = () => {
   const initiatePayment = useCallback(async ({
-    amount,
     bookingId,
     bookingType,
     guestName,
@@ -14,15 +13,16 @@ export const useRazorpay = () => {
     onFailure,
   }) => {
     try {
-      const { data } = await paymentsAPI.createOrder({ amount, bookingId, bookingType })
+      // amount is NOT sent — backend computes it from the booking record (security fix)
+      const { data } = await paymentsAPI.createOrder({ bookingId, bookingType })
 
       const options = {
-        key: data.key,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'Yashraj Palace',
-        description: bookingType === 'room' ? 'Room Booking Advance' : 'Event Token Payment',
-        order_id: data.orderId,
+        key:         data.key,
+        amount:      data.amount,
+        currency:    data.currency,
+        name:        'Yashraj Palace',
+        description: bookingType === 'room' ? 'Room Booking Advance (30%)' : 'Event Token Payment',
+        order_id:    data.orderId,
         handler: async (response) => {
           try {
             const verifyRes = await paymentsAPI.verify({
@@ -32,10 +32,10 @@ export const useRazorpay = () => {
               bookingId,
               bookingType,
             })
-            toast.success('Payment successful! Booking confirmed.')
+            toast.success('Payment successful! Your booking is confirmed.')
             onSuccess?.(verifyRes.data)
           } catch (err) {
-            toast.error('Payment verification failed. Please contact us.')
+            toast.error('Payment verification failed. Please contact us on WhatsApp.')
             onFailure?.(err)
           }
         },
@@ -44,9 +44,9 @@ export const useRazorpay = () => {
         theme:   { color: '#6B1A2B' },
         modal: {
           ondismiss: () => {
-            toast('Payment cancelled. Your booking is held for 15 minutes.', { icon: 'ℹ️' })
+            toast('Payment cancelled. Your booking is held for 20 minutes — complete payment to confirm.', { icon: 'ℹ️' })
           }
-        }
+        },
       }
 
       const rzp = new window.Razorpay(options)
@@ -56,7 +56,7 @@ export const useRazorpay = () => {
       })
       rzp.open()
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to initiate payment')
+      toast.error(err.response?.data?.message || 'Failed to initiate payment. Please try again.')
       onFailure?.(err)
     }
   }, [])

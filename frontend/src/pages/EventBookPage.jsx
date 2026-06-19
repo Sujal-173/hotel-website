@@ -109,8 +109,11 @@ export default function EventBookPage() {
 
   const handleTokenPayment = async () => {
     if (!booking) return
+    // Cache booking in sessionStorage so confirmation page can display without extra API call
+    sessionStorage.setItem(`booking_${booking.bookingId}`, JSON.stringify(booking))
     await initiatePayment({
-      amount: token, bookingId: booking.bookingId, bookingType: 'event',
+      // amount is NOT passed — backend computes from booking record (security fix)
+      bookingId: booking.bookingId, bookingType: 'event',
       guestName: form.name, guestEmail: form.email, guestPhone: form.phone,
       onSuccess: () => navigate(`/booking-confirmation/${booking.bookingId}`),
     })

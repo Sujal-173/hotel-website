@@ -84,7 +84,7 @@ export default function App() {
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
       <Route path="/register" element={<PublicLayout><RegisterPage /></PublicLayout>} />
-      <Route path="/booking-confirmation/:id" element={<PublicLayout><BookingConfirmPage /></PublicLayout>} />
+      <Route path="/booking-confirmation/:bookingId" element={<PublicLayout><BookingConfirmPage /></PublicLayout>} />
 
       {/* SEO landing pages */}
       <Route path="/hotel-in-maheshwar"              element={<PublicLayout><SeoLandingPage slug="hotel-in-maheshwar" /></PublicLayout>} />

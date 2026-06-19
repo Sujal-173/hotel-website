@@ -1,36 +1,40 @@
 const express = require('express');
 const misc = require('../controllers/miscControllers');
-const { protect, admin } = require('../middleware/auth');
+const { protect, admin, staff } = require('../middleware/auth');
+const {
+  validateCreateReview,
+  validateCreateInquiry,
+} = require('../middleware/validate');
 
-// Review routes
+// ── Review routes ─────────────────────────────────────────────────────────────
 const reviewRouter = express.Router();
-reviewRouter.get('/', misc.getReviews);
-reviewRouter.post('/', misc.createReview);
-reviewRouter.get('/admin/all', protect, admin, misc.getAllReviewsAdmin);
-reviewRouter.put('/admin/:id', protect, admin, misc.updateReview);
+reviewRouter.get('/',            misc.getReviews);
+reviewRouter.post('/',           validateCreateReview, misc.createReview);
+reviewRouter.get('/admin/all',   protect, staff, misc.getAllReviewsAdmin);
+reviewRouter.put('/admin/:id',   protect, staff, misc.updateReview);
 
-// Gallery routes
+// ── Gallery routes ────────────────────────────────────────────────────────────
 const galleryRouter = express.Router();
-galleryRouter.get('/', misc.getGallery);
-galleryRouter.post('/', protect, admin, misc.addGalleryImage);
-galleryRouter.put('/:id', protect, admin, misc.updateGalleryImage);
-galleryRouter.delete('/:id', protect, admin, misc.deleteGalleryImage);
+galleryRouter.get('/',        misc.getGallery);
+galleryRouter.post('/',       protect, admin, misc.addGalleryImage);
+galleryRouter.put('/:id',     protect, admin, misc.updateGalleryImage);
+galleryRouter.delete('/:id',  protect, admin, misc.deleteGalleryImage);
 
-// Inquiry routes
+// ── Inquiry routes ────────────────────────────────────────────────────────────
 const inquiryRouter = express.Router();
-inquiryRouter.post('/', misc.createInquiry);
-inquiryRouter.get('/admin/all', protect, admin, misc.getAllInquiries);
-inquiryRouter.put('/admin/:id', protect, admin, misc.updateInquiry);
+inquiryRouter.post('/',           validateCreateInquiry, misc.createInquiry);
+inquiryRouter.get('/admin/all',   protect, staff, misc.getAllInquiries);
+inquiryRouter.put('/admin/:id',   protect, staff, misc.updateInquiry);
 
-// Offer routes
+// ── Offer routes ──────────────────────────────────────────────────────────────
 const offerRouter = express.Router();
-offerRouter.get('/', misc.getOffers);
+offerRouter.get('/',          misc.getOffers);
 offerRouter.post('/validate', misc.validateOffer);
-offerRouter.post('/admin', protect, admin, misc.createOffer);
+offerRouter.post('/admin',    protect, admin, misc.createOffer);
 offerRouter.put('/admin/:id', protect, admin, misc.updateOffer);
 
-// Admin dashboard route
+// ── Admin dashboard ───────────────────────────────────────────────────────────
 const adminRouter = express.Router();
-adminRouter.get('/dashboard', protect, admin, misc.getDashboardStats);
+adminRouter.get('/dashboard', protect, staff, misc.getDashboardStats);
 
 module.exports = { reviewRouter, galleryRouter, inquiryRouter, offerRouter, adminRouter };

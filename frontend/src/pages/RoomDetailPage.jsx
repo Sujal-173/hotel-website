@@ -106,14 +106,16 @@ export default function RoomDetailPage() {
 
   const handlePayment = async () => {
     if (!booking) return
+    // Cache booking in sessionStorage so confirmation page can display without extra API call
+    sessionStorage.setItem(`booking_${booking.bookingId}`, JSON.stringify(booking))
     await initiatePayment({
-      amount: advance,
+      // amount is NOT passed — backend computes from booking record (security fix)
       bookingId: booking.bookingId,
       bookingType: 'room',
       guestName: guestInfo.name,
       guestEmail: guestInfo.email,
       guestPhone: guestInfo.phone,
-      onSuccess: (res) => navigate(`/booking-confirmation/${booking.bookingId}`),
+      onSuccess: () => navigate(`/booking-confirmation/${booking.bookingId}`),
       onFailure: () => {},
     })
   }

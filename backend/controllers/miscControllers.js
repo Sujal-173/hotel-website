@@ -6,8 +6,14 @@ const socket = require('../utils/socket');
 // ─── REVIEWS ────────────────────────────────────────────────────────────────
 
 const createReview = asyncHandler(async (req, res) => {
-  const review = await Review.create(req.body);
-  res.status(201).json({ success: true, review, message: 'Review submitted. Will appear after moderation.' });
+  // Whitelist only safe fields — prevent mass assignment
+  const { name, email, rating, title, comment, occasion, stayDate } = req.body;
+  const review = await Review.create({ name, email, rating, title, comment, occasion, stayDate });
+  res.status(201).json({
+    success: true,
+    review,
+    message: 'Review submitted. It will appear after moderation.',
+  });
 });
 
 const getReviews = asyncHandler(async (req, res) => {
@@ -19,12 +25,23 @@ const getReviews = asyncHandler(async (req, res) => {
 });
 
 const getAllReviewsAdmin = asyncHandler(async (req, res) => {
-  const reviews = await Review.find().sort({ createdAt: -1 });
+  const { isApproved } = req.query;
+  const query = {};
+  if (isApproved !== undefined) query.isApproved = isApproved === 'true';
+  const reviews = await Review.find(query).sort({ createdAt: -1 });
   res.json({ success: true, reviews });
 });
 
 const updateReview = asyncHandler(async (req, res) => {
-  const review = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  // Whitelist admin-updatable fields only
+  const { isApproved, isFeatured, isActive } = req.body;
+  const review = await Review.findByIdAndUpdate(
+    req.params.id,
+    { ...(isApproved  !== undefined && { isApproved }),
+      ...(isFeatured  !== undefined && { isFeatured }),
+      ...(isActive    !== undefined && { isActive }) },
+    { new: true }
+  );
   if (!review) { res.status(404); throw new Error('Review not found'); }
   res.json({ success: true, review });
 });
@@ -35,31 +52,44 @@ const getGallery = asyncHandler(async (req, res) => {
   const { category } = req.query;
   const query = { isActive: true };
   if (category) query.category = category;
-  const images = await Gallery.find(query).sort({ sortOrder: 1 });
+  const images = await Gallery.find(query).sort({ sortOrder: 1, createdAt: -1 });
   res.json({ success: true, images });
 });
 
 const addGalleryImage = asyncHandler(async (req, res) => {
-  const image = await Gallery.create({ ...req.body, uploadedBy: req.user._id });
+  const { title, url, thumbnail, category, alt, caption, isFeatured, sortOrder } = req.body;
+  if (!url)      { res.status(400); throw new Error('Image URL is required'); }
+  if (!category) { res.status(400); throw new Error('Category is required'); }
+  const image = await Gallery.create({
+    title, url, thumbnail, category, alt, caption, isFeatured, sortOrder,
+    uploadedBy: req.user._id,
+  });
   res.status(201).json({ success: true, image });
 });
 
 const updateGalleryImage = asyncHandler(async (req, res) => {
-  const image = await Gallery.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const { title, url, thumbnail, category, alt, caption, isFeatured, isActive, sortOrder } = req.body;
+  const image = await Gallery.findByIdAndUpdate(
+    req.params.id,
+    { title, url, thumbnail, category, alt, caption, isFeatured, isActive, sortOrder },
+    { new: true }
+  );
+  if (!image) { res.status(404); throw new Error('Gallery image not found'); }
   res.json({ success: true, image });
 });
 
 const deleteGalleryImage = asyncHandler(async (req, res) => {
-  await Gallery.findByIdAndDelete(req.params.id);
+  const image = await Gallery.findByIdAndDelete(req.params.id);
+  if (!image) { res.status(404); throw new Error('Gallery image not found'); }
   res.json({ success: true, message: 'Image deleted' });
 });
 
 // ─── INQUIRIES ───────────────────────────────────────────────────────────────
 
 const createInquiry = asyncHandler(async (req, res) => {
-  const inquiry = await Inquiry.create(req.body);
+  const { name, email, phone, subject, message, inquiryType, eventDate, guestCount } = req.body;
+  const inquiry = await Inquiry.create({ name, email, phone, subject, message, inquiryType, eventDate, guestCount });
 
-  // Real-time admin notification
   socket.emitToAdmin('new_inquiry', {
     name: inquiry.name,
     phone: inquiry.phone,
@@ -67,7 +97,6 @@ const createInquiry = asyncHandler(async (req, res) => {
     createdAt: inquiry.createdAt,
   });
 
-  // Admin email alert (non-blocking)
   sendAdminNewInquiryAlert(inquiry).catch(console.error);
 
   res.status(201).json({ success: true, inquiry, message: 'Thank you! We will contact you shortly.' });
@@ -81,7 +110,17 @@ const getAllInquiries = asyncHandler(async (req, res) => {
 });
 
 const updateInquiry = asyncHandler(async (req, res) => {
-  const inquiry = await Inquiry.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const { status, assignedTo, followUpDate, adminNotes, isRead } = req.body;
+  const inquiry = await Inquiry.findByIdAndUpdate(
+    req.params.id,
+    { ...(status       !== undefined && { status }),
+      ...(assignedTo   !== undefined && { assignedTo }),
+      ...(followUpDate !== undefined && { followUpDate }),
+      ...(adminNotes   !== undefined && { adminNotes }),
+      ...(isRead       !== undefined && { isRead }) },
+    { new: true }
+  );
+  if (!inquiry) { res.status(404); throw new Error('Inquiry not found'); }
   res.json({ success: true, inquiry });
 });
 
@@ -89,33 +128,65 @@ const updateInquiry = asyncHandler(async (req, res) => {
 
 const getOffers = asyncHandler(async (req, res) => {
   const now = new Date();
-  const offers = await Offer.find({ isActive: true, $or: [{ endDate: null }, { endDate: { $gte: now } }] });
+  const offers = await Offer.find({
+    isActive: true,
+    $or: [{ endDate: null }, { endDate: { $gte: now } }],
+  });
   res.json({ success: true, offers });
 });
 
+// Validate only — increment happens atomically in createBooking, not here
 const validateOffer = asyncHandler(async (req, res) => {
   const { code, amount, type } = req.body;
-  const offer = await Offer.findOne({ code: code.toUpperCase(), isActive: true });
+  if (!code) { res.status(400); throw new Error('Promo code is required'); }
+
+  const offer = await Offer.findOne({
+    code: code.trim().toUpperCase(),
+    isActive: true,
+    $or: [{ endDate: null }, { endDate: { $gte: new Date() } }],
+  });
   if (!offer) { res.status(404); throw new Error('Invalid or expired promo code'); }
-  if (offer.endDate && offer.endDate < new Date()) { res.status(400); throw new Error('Promo code has expired'); }
-  if (offer.usageLimit && offer.usedCount >= offer.usageLimit) { res.status(400); throw new Error('Promo code usage limit reached'); }
-  if (offer.minAmount && amount < offer.minAmount) { res.status(400); throw new Error(`Minimum booking amount ₹${offer.minAmount} required`); }
-  if (offer.applicableTo !== 'both' && offer.applicableTo !== type) { res.status(400); throw new Error(`This offer is not valid for ${type} bookings`); }
+  if (offer.usageLimit && offer.usedCount >= offer.usageLimit) {
+    res.status(400); throw new Error('Promo code usage limit reached');
+  }
+  if (offer.minAmount && amount < offer.minAmount) {
+    res.status(400); throw new Error(`Minimum booking amount ₹${offer.minAmount} required for this code`);
+  }
+  if (offer.applicableTo !== 'both' && offer.applicableTo !== type) {
+    res.status(400); throw new Error(`This code is not valid for ${type} bookings`);
+  }
 
   let discount = 0;
-  if (offer.type === 'percentage') discount = Math.min((amount * offer.value) / 100, offer.maxDiscount || Infinity);
-  else if (offer.type === 'fixed') discount = offer.value;
+  const sub = Number(amount) || 0;
+  if (offer.type === 'percentage') {
+    discount = Math.min(Math.round((sub * offer.value) / 100), offer.maxDiscount || Infinity);
+  } else if (offer.type === 'fixed') {
+    discount = Math.min(offer.value, sub);
+  }
 
-  res.json({ success: true, discount: Math.round(discount), offer: { name: offer.title, type: offer.type, value: offer.value } });
+  res.json({
+    success: true,
+    discount: Math.round(discount),
+    offer: { name: offer.title, type: offer.type, value: offer.value },
+  });
 });
 
 const createOffer = asyncHandler(async (req, res) => {
-  const offer = await Offer.create(req.body);
+  const { title, description, code, type, value, minAmount, maxDiscount, applicableTo, startDate, endDate, usageLimit } = req.body;
+  const offer = await Offer.create({
+    title, description, code, type, value, minAmount, maxDiscount, applicableTo, startDate, endDate, usageLimit,
+  });
   res.status(201).json({ success: true, offer });
 });
 
 const updateOffer = asyncHandler(async (req, res) => {
-  const offer = await Offer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const { title, description, type, value, minAmount, maxDiscount, applicableTo, startDate, endDate, usageLimit, isActive } = req.body;
+  const offer = await Offer.findByIdAndUpdate(
+    req.params.id,
+    { title, description, type, value, minAmount, maxDiscount, applicableTo, startDate, endDate, usageLimit, isActive },
+    { new: true }
+  );
+  if (!offer) { res.status(404); throw new Error('Offer not found'); }
   res.json({ success: true, offer });
 });
 
@@ -132,7 +203,8 @@ const getDashboardStats = asyncHandler(async (req, res) => {
   const [
     totalRoomBookings, confirmedRoomBookings, pendingRoomBookings,
     totalEventBookings, confirmedEventBookings, pendingInquiries,
-    totalRevenue, monthlyRevenue, totalUsers, totalReviews, unreviewedCount
+    totalRevenue, monthlyRevenue, totalUsers, totalReviews, unreviewedCount,
+    todayCheckIns, todayCheckOuts,
   ] = await Promise.all([
     RoomBooking.countDocuments(),
     RoomBooking.countDocuments({ status: 'confirmed' }),
@@ -144,7 +216,9 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     Payment.aggregate([{ $match: { status: 'captured', createdAt: { $gte: thisMonthStart } } }, { $group: { _id: null, total: { $sum: '$amount' } } }]),
     User.countDocuments({ role: 'user' }),
     Review.countDocuments(),
-    Review.countDocuments({ isApproved: false })
+    Review.countDocuments({ isApproved: false }),
+    RoomBooking.countDocuments({ status: 'confirmed', checkIn: { $gte: new Date(now.setHours(0,0,0,0)), $lt: new Date(now.setHours(23,59,59,999)) } }),
+    RoomBooking.countDocuments({ status: 'checked_in', checkOut: { $gte: new Date(now.setHours(0,0,0,0)), $lt: new Date(now.setHours(23,59,59,999)) } }),
   ]);
 
   const recentBookings = await RoomBooking.find()
@@ -164,15 +238,13 @@ const getDashboardStats = asyncHandler(async (req, res) => {
       roomBookings: { total: totalRoomBookings, confirmed: confirmedRoomBookings, pending: pendingRoomBookings },
       eventBookings: { total: totalEventBookings, confirmed: confirmedEventBookings },
       inquiries: { pending: pendingInquiries },
-      revenue: {
-        total: totalRevenue[0]?.total || 0,
-        thisMonth: monthlyRevenue[0]?.total || 0
-      },
+      revenue: { total: totalRevenue[0]?.total || 0, thisMonth: monthlyRevenue[0]?.total || 0 },
       users: totalUsers,
-      reviews: { total: totalReviews, pending: unreviewedCount }
+      reviews: { total: totalReviews, pending: unreviewedCount },
+      today: { checkIns: todayCheckIns, checkOuts: todayCheckOuts },
     },
     recentBookings,
-    recentEvents
+    recentEvents,
   });
 });
 
@@ -181,5 +253,5 @@ module.exports = {
   getGallery, addGalleryImage, updateGalleryImage, deleteGalleryImage,
   createInquiry, getAllInquiries, updateInquiry,
   getOffers, validateOffer, createOffer, updateOffer,
-  getDashboardStats
+  getDashboardStats,
 };
