@@ -69,6 +69,8 @@ const seed = async () => {
   await EventPackage.insertMany([
     {
       name: 'Silver Celebration', slug: 'silver-celebration', category: 'birthday',
+      description: 'A well-arranged birthday celebration package for up to 200 guests in our banquet hall. Includes hall access, basic decor, sound system, and parking — ideal for milestone birthdays and family gatherings.',
+      shortDesc: 'Banquet birthday package for up to 200 guests with decor and sound.',
       price: 45000, priceType: 'fixed', capacity: { min: 50, max: 200 }, duration: 1,
       venue: 'banquet',
       inclusions: ['Banquet hall access (6 hours)','Basic floral decoration','Sound system & mic setup','Parking for 40 vehicles','1 event coordination staff','Welcome banner'],
@@ -77,6 +79,8 @@ const seed = async () => {
     },
     {
       name: 'Royal Wedding Package', slug: 'royal-wedding-package', category: 'wedding',
+      description: 'Our most popular wedding package — a full-day celebration across the garden and banquet hall for up to 600 guests. Includes premium decor, DJ, 300-plate catering, 4 family rooms, and a dedicated coordinator.',
+      shortDesc: 'Full-day wedding with premium decor, catering for 300, and 4 family rooms.',
       price: 180000, priceType: 'fixed', capacity: { min: 200, max: 600 }, duration: 1,
       venue: 'combined', badge: 'Most Popular',
       inclusions: ['Full garden + hall access (full day)','Premium floral & mandap decor','DJ, lighting & sound system','300-plate in-house catering','4 rooms for family (1 night)','Dedicated wedding coordinator','Welcome gate setup','Bride & groom seating arrangement'],
@@ -85,6 +89,8 @@ const seed = async () => {
     },
     {
       name: 'Grand Palace Package', slug: 'grand-palace-package', category: 'wedding',
+      description: 'The ultimate 2-day celebration across the entire Yashraj Palace property for up to 1000 guests. Unlimited catering, custom luxury decor, 10 rooms for 2 nights, full coordination team, and photography support.',
+      shortDesc: '2-day all-inclusive grand wedding for up to 1000 guests across full property.',
       price: 450000, priceType: 'fixed', capacity: { min: 500, max: 1000 }, duration: 2,
       venue: 'combined', badge: 'All Inclusive',
       inclusions: ['Full property — garden + hall + lawn (2 days)','Custom luxury stage & decor','Unlimited catering — all meals + live counters','10 rooms for 2 nights','2-day event coordination team','Baraat welcome setup','Custom lighting rig','Photography & videography coordination'],
@@ -93,6 +99,8 @@ const seed = async () => {
     },
     {
       name: 'Corporate Off-Site', slug: 'corporate-off-site', category: 'corporate',
+      description: 'A professional corporate event package for 50–300 attendees. Full AV setup, projector, high-speed Wi-Fi, welcome snacks, and a buffet lunch — everything your team needs for a productive off-site.',
+      shortDesc: 'Corporate event for up to 300 with full AV, Wi-Fi, and buffet lunch.',
       price: 55000, priceType: 'fixed', capacity: { min: 50, max: 300 }, duration: 1,
       venue: 'banquet',
       inclusions: ['Banquet hall + full AV setup','Projector, screen & mics','High-speed Wi-Fi','Welcome snacks & lunch buffet','Tea/coffee station','Event coordination support'],
@@ -101,6 +109,8 @@ const seed = async () => {
     },
     {
       name: 'Engagement Function', slug: 'engagement-function', category: 'engagement',
+      description: 'A beautiful garden engagement ceremony for up to 200 guests. Includes floral stage setup, sound system, seating arrangement, and basic catering coordination — perfect for an intimate and elegant function.',
+      shortDesc: 'Garden engagement for up to 200 guests with floral stage and sound.',
       price: 35000, priceType: 'fixed', capacity: { min: 50, max: 200 }, duration: 1,
       venue: 'garden',
       inclusions: ['Garden access (5 hours)','Floral stage setup','Sound system','200-guest seating arrangement','Basic catering coordination'],
@@ -109,6 +119,8 @@ const seed = async () => {
     },
     {
       name: 'Birthday Bash', slug: 'birthday-bash', category: 'birthday',
+      description: 'A fun and festive birthday celebration for up to 150 guests in our banquet hall. Balloon and theme decoration, sound system, and cake coordination included — make it a party to remember.',
+      shortDesc: 'Banquet birthday party for up to 150 with theme decor and cake.',
       price: 25000, priceType: 'fixed', capacity: { min: 30, max: 150 }, duration: 1,
       venue: 'banquet',
       inclusions: ['Banquet hall (4 hours)','Balloon & theme decoration','Basic sound system','Parking for 30 vehicles','Birthday cake coordination'],
