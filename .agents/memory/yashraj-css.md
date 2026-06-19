@@ -3,8 +3,10 @@ name: Yashraj Palace CSS System
 description: Premium CSS utilities, animation classes, Tailwind color tokens, and palace design rules
 ---
 
-## Tailwind Custom Colors (tailwind.config.js)
+## CRITICAL: CSS Import Order
+`@import url(fonts)` MUST come BEFORE `@tailwind base/components/utilities` — otherwise Vite throws "import must precede all other statements".
 
+## Tailwind Custom Colors (tailwind.config.js)
 ```
 maroon:   { DEFAULT: '#6B1A2B', dark: '#4A0F1D', light: '#8B2238' }
 gold:     { DEFAULT: '#C9A84C', light: '#E8C97A' }
@@ -12,72 +14,74 @@ ivory:    { DEFAULT: '#FAF7F2', dark: '#F2EDE4' }
 charcoal: { DEFAULT: '#1C1C1E', muted: '#4A4A4F' }
 ```
 
-## Palace Design Rule — Sharp Corners Everywhere
-All user-facing pages must use `border-radius: 0`. Never use `rounded-*` Tailwind classes on public pages.
-Use `style={{ borderRadius: 0 }}` to override stray Tailwind. Admin pages are exempt.
+## Palace Design Rules
+- **Sharp corners everywhere**: `border-radius: 0` on ALL user-facing pages. No `rounded-*` Tailwind. Admin pages exempt.
+- **Eyebrow text**: `.eyebrow` — 0.625rem, tracking-[0.3em], uppercase, `#C9A84C` gold
+- **Section headings**: `.section-title` — Playfair Display, clamp(1.875rem, 4vw, 2.75rem)
+- **Page heroes**: `.page-hero` — `#1E0610 → #3A0D1A → #6B1A2B → #7C2030` gradient + diagonal gold lattice (opacity 0.05)
 
-**Why:** The homepage set the aesthetic standard with sharp palace-style corners and ornamental accents. Consistency requires all pages to match.
+## Luxury Minimal CSS Philosophy (current theme)
+- More whitespace: `section-lg` = py-16 md:py-24 lg:py-32
+- clamp() for all heading font sizes
+- Thin subtle borders (#E8E0D8), no heavy shadows
+- Gold used sparingly as an accent, not dominant
+- Refined button hover: translateY(-1px) + maroon shadow
 
-## Key CSS Classes (defined in index.css @layer components)
+## Key CSS Classes (index.css @layer components)
 
 ### Buttons (all sharp, border-radius: 0)
-- `.btn-primary` — maroon gradient #8B2238→#4A0F1D, shine sweep on hover (::after pseudo)
-- `.btn-gold` — gold gradient #E8C97A→#B8943C
-- `.btn-outline` — maroon border fills on hover
-- `.btn-whatsapp` — green-500
+- `.btn-primary` — `#6B1A2B` bg, hover `#8B2238` + translateY(-1px) + shadow
+- `.btn-gold` — `#C9A84C` bg, maroon text
+- `.btn-outline` — maroon border/text, fill on hover
+- `.btn-outline-gold` — gold border/text, rgba(gold,0.12) hover
+- `.btn-whatsapp` — `#25D366` green
+- `.btn-sm` / `.btn-lg` — padding overrides
 
 ### Typography
-- `.section-eyebrow` — gold, xs, tracking-widest, uppercase
-- `.section-title` — Playfair Display, 3xl/4xl
-- `.gold-divider` — 48×2px gradient gold bar
-- `.gold-shimmer-text` — shimmer animation on gold gradient text clip
+- `.eyebrow` — gold, 0.625rem, tracking-[0.3em], uppercase
+- `.section-title` — Playfair Display, clamp(1.875rem, 4vw, 2.75rem), `#1C1C1E`
+- `.section-title-light` — same but `#FAF7F2`
+- `.gold-divider` / `.gold-divider-center` — 3rem×1px gold gradient bar
+- `.gold-shimmer-text` — animated gold gradient text clip
 
-### Cards (all sharp, border-radius: 0)
-- `.card` — white, hover lift + maroon shadow
-- `.glass-card` — white/8 + backdrop-blur-12 (for dark sections)
-- `.gold-badge` — E8C97A→C9A84C gradient
-- `.palace-card` — white border + CSS gold corner brackets via ::before/::after
-- `.info-card` — border card, hover border gold
-- `.usp-card` — F2EDE4 bg, hover→maroon bg
+### Cards (all sharp)
+- `.card` — white, stone-200 border, hover: translateY(-4px) + maroon shadow + gold border
+- `.palace-card` — white, stone-200 border + CSS gold corner brackets (::before/::after 16×16px)
+- `.glass-card` — white/7 + backdrop-blur-14 + white/14 border (for dark sections)
+- `.info-card` — white, stone-200 border, hover translateY(-2px)
+- `.usp-card` — `#F9F5EF` bg, hover: maroon bg + white text
 
-### Forms (all sharp, border-radius: 0)
-- `.input-field` — ivory bg, stone border, maroon focus ring
+### Forms
+- `.input-field` — `#FAF7F2` bg, `#DDD5C8` border, maroon focus ring
+- `.label` — 0.625rem, tracking-[0.2em], uppercase, `#6E5E52`
 
-### Filter Tabs (sharp tab style)
-- `.filter-pill` / `.filter-pill-active` / `.filter-pill-inactive`
-- Active: `linear-gradient(135deg, #8B2238, #6B1A2B)`, white text
-- Inactive: `bg-[#F2EDE4] border-[#E8E0D8]`, hover border-gold
-- Filter bar wrapper: `bg-[#FAF7F2] border-b` with `borderColor: rgba(201,168,76,0.25)`
+### Page Hero
+- `.page-hero` — py-24 md:py-32, `#1E0610 → #7C2030` gradient, diagonal gold lattice overlay 5% opacity
+- `.hero-pattern` — radial gold ellipse + repeating 45° gold lines, 28px tile
 
-### Ornamental / Palace Elements
-- `.page-hero` — `linear-gradient(135deg, #2E0912, #4A0F1D, #6B1A2B, #8B2238)` + diagonal gold lattice overlay via ::before
-- `.ornamental-border` — 4-corner gold bracket via ::before/::after (22×22px)
-- `.palace-card` — 4-corner bracket CSS pseudo-elements
-- `.ornament-divider` — centred gold lines flanking an icon slot
-- `.palace-section-header` — eyebrow + h2 + ornamental divider row
-- `.section-accent` — 48px gold horizontal bar
+### Filter Pills (sharp)
+- `.filter-pill` — base styles, tracking-[0.18em], uppercase
+- `.filter-pill-active` — `#6B1A2B` bg, ivory text
+- `.filter-pill-inactive` — `#F2EDE4` bg, stone-500 text, hover gold border
 
-### Background Pattern (hero sections + auth pages)
-```
-repeating-linear-gradient(45deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 50%)
-background-size: 28px 28px; opacity: ~0.06
-```
-**Why:** Matches the homepage's diagonal gold lattice — establishes the "palace" aesthetic consistently.
+### Ornamental Elements
+- `.ornamental-border` — border + gold corner brackets via ::before/::after (20×20px)
+- `.ornament-divider` — flex row with gold line ::before/::after flanking icon
 
-### Auth Pages (Login / Register)
-Full-page: `linear-gradient(135deg, #2E0912, #4A0F1D, #6B1A2B)` + diagonal gold overlay.
-Card: ivory `bg-[#FAF7F2]`, 4 gold corner `<span>` elements (React-compatible, not pseudo).
-Crown icon (lucide-react), gold ornament divider with ✦ symbol.
+### Mobile Utilities
+- `.container-palace` — max-w-1280, responsive px (1.25rem→2rem→2.5rem)
+- `.hide-mobile` — `display:none` at ≤639px
+- `.wa-float` — fixed bottom-right WhatsApp floating button, pulse animation
 
 ## Animation Classes
-
-- `.reveal` + `.visible` — scroll reveal via IntersectionObserver (opacity 0→1, translateY 32→0)
-- `.reveal-delay-{1-4}` — stagger transition-delay 0.1–0.4s
+- `.reveal` / `.reveal.visible` — IntersectionObserver scroll reveal (opacity+translateY)
+- `.reveal-delay-{1-4}` — stagger 0.08–0.32s
 - `.animate-fade-in-up` / `.animate-fade-in` / `.animate-float` / `.animate-slide-down` / `.animate-scale-in`
-- `.stagger-children` — nth-child delays 0.05–0.40s
+- `.animation-delay-{100-400}` — explicit delay classes
+- `.stagger` — nth-child animation delays 0.05–0.40s
 
 ## Room Image Gradients
-
-`.room-img-deluxe` `.room-img-premium` `.room-img-suite` `.room-img-default` — CSS gradient placeholders.
-
-**Why:** No real photos available; warm brown/taupe CSS gradients create a premium visual.
+- `.room-img-deluxe` — brown/taupe `#D5C4B0 → #B8A880`
+- `.room-img-premium` — amber brown `#C4A882 → #8B6A3A`
+- `.room-img-suite` — warm grey-brown `#B8A094 → #7A6050`
+- `.room-img-default` — ivory `#D5C8B8 → #C0B0A0`

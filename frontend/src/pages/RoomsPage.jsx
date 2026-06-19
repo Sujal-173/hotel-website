@@ -219,7 +219,7 @@ function RoomCard({ room, checkIn, checkOut, guests }) {
           {room.amenities?.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {room.amenities.slice(0, 6).map(a => (
-                <span key={a} className="text-xs bg-ivory-dark text-charcoal-muted px-2.5 py-1 rounded-full">{a}</span>
+                <span key={a} className="text-xs bg-ivory-dark text-charcoal-muted px-2.5 py-1">{a}</span>
               ))}
             </div>
           )}

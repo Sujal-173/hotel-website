@@ -109,7 +109,7 @@ export default function Footer() {
                 { href: 'https://g.page/yashrajpalace',        icon: <FaGoogle size={14} />,    label: 'Google' },
               ].map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noreferrer" aria-label={s.label}
-                  className="w-8 h-8 rounded-full border border-stone-600 flex items-center justify-center transition-all hover:bg-gold hover:border-gold hover:text-maroon">
+                  className="w-8 h-8 border border-stone-600 flex items-center justify-center transition-all hover:bg-gold hover:border-gold hover:text-maroon">
                   {s.icon}
                 </a>
               ))}
