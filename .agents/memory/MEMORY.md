@@ -1,5 +1,0 @@
-- [Yashraj Palace SEO Architecture](yashraj-seo.md) — Hotel + FAQPage + AggregateRating + HotelRoom + EventVenue JSON-LD across pages; FAQ accordion on HomePage is key AEO element
-- [Yashraj Palace CSS System](yashraj-css.md) — Premium CSS in index.css: reveal/visible scroll animation, gold-shimmer-text, usp-card, faq-item, btn-primary with gradient+shine; Tailwind custom colors maroon/gold/ivory/charcoal
-- [Yashraj Palace Export Pattern](yashraj-exports.md) — All pages must use `export default function` only (no named exports); DiningPage/ReviewsPage/EventPackagesPage/NearbyPage previously had dual exports causing HMR issues
-- [Yashraj Palace Security Audit](yashraj-security.md) — Full audit+fix applied: middleware split, payment server-side amount, webhook Buffer parsing, promo $and fix, cron expiry, sessionStorage for confirmation page
-- [Yashraj Palace Admin Fixes](yashraj-admin-fixes.md) — Admin bug fixes: cancelBooking accepts both _id and bookingId; admin rooms uses /rooms/admin/all; admin offers uses /offers/admin/all; live updates via content_updated socket event
