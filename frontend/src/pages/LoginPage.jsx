@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../context/AuthContext'
+import { Crown } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function LoginPage() {
@@ -32,19 +33,51 @@ export default function LoginPage() {
         <title>Sign In – Yashraj Palace</title>
       </Helmet>
 
-      <div className="min-h-screen bg-ivory-dark flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-sm">
+      <div className="min-h-screen flex items-center justify-center px-4 py-16 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #2E0912 0%, #4A0F1D 40%, #6B1A2B 100%)' }}>
+
+        {/* Background ornament pattern */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(45deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 50%)',
+            backgroundSize: '28px 28px',
+            opacity: 0.06,
+          }} />
+
+        <div className="w-full max-w-sm relative z-10">
+
           {/* Brand */}
-          <div className="text-center mb-8">
-            <Link to="/" className="font-serif text-2xl font-semibold text-maroon">Yashraj Palace</Link>
-            <p className="text-xs text-gold tracking-widest uppercase mt-1">Hotel · Wedding Garden · Events</p>
+          <div className="text-center mb-10">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <span className="h-px bg-gold/50 w-10" />
+              <Crown size={20} className="text-gold" />
+              <span className="h-px bg-gold/50 w-10" />
+            </div>
+            <Link to="/" className="font-serif text-3xl font-bold text-white tracking-wide" style={{ letterSpacing: '0.06em' }}>
+              YASHRAJ PALACE
+            </Link>
+            <p className="text-gold text-[10px] tracking-[0.3em] uppercase mt-1.5">Hotel · Wedding Garden · Events</p>
           </div>
 
-          <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
-            <h1 className="font-serif text-xl font-semibold mb-1 text-center">Welcome Back</h1>
-            <p className="text-sm text-charcoal-muted text-center mb-6">Sign in to view your bookings</p>
+          {/* Card with ornamental border */}
+          <div className="relative bg-[#FAF7F2] p-8" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+            {/* Corner brackets */}
+            <span className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-gold -translate-x-1 -translate-y-1" />
+            <span className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-gold translate-x-1 -translate-y-1" />
+            <span className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-gold -translate-x-1 translate-y-1" />
+            <span className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-gold translate-x-1 translate-y-1" />
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="text-center mb-7">
+              <h1 className="font-serif text-2xl font-bold text-maroon">Welcome Back</h1>
+              <div className="flex items-center justify-center gap-3 my-3">
+                <span className="h-px bg-gold/40 w-10" />
+                <span className="text-gold text-xs">✦</span>
+                <span className="h-px bg-gold/40 w-10" />
+              </div>
+              <p className="text-sm text-stone-500">Sign in to view your bookings</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="label">Email Address</label>
                 <input
@@ -72,25 +105,25 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                className="btn-primary w-full py-3.5 text-xs tracking-[0.2em] uppercase disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? 'Signing In…' : 'Sign In →'}
               </button>
             </form>
 
-            <div className="mt-5 pt-5 border-t border-gray-100 text-center space-y-2">
-              <p className="text-sm text-charcoal-muted">
+            <div className="mt-6 pt-6 border-t border-stone-200 text-center space-y-2">
+              <p className="text-sm text-stone-500">
                 Don't have an account?{' '}
                 <Link to="/register" className="text-maroon font-semibold hover:underline">Create one</Link>
               </p>
-              <Link to="/" className="text-xs text-charcoal-muted hover:text-maroon block">← Back to Home</Link>
+              <Link to="/" className="text-xs text-stone-400 hover:text-maroon block transition-colors">← Back to Home</Link>
             </div>
           </div>
 
           {/* Admin hint */}
-          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-            <p className="text-xs text-amber-700">
-              <strong>Admin?</strong> Use credentials from your <code>.env</code> file.
+          <div className="mt-4 px-4 py-3 text-center" style={{ background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.25)' }}>
+            <p className="text-xs text-gold/80">
+              <strong className="text-gold">Admin?</strong> Use your admin credentials to access the dashboard.
             </p>
           </div>
         </div>

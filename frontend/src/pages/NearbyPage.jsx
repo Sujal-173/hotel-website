@@ -113,7 +113,7 @@ export default function NearbyPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ATTRACTIONS.map(a => (
-            <div key={a.name} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:-translate-y-2 hover:shadow-xl transition-all duration-300 group">
+            <div key={a.name} className="bg-white overflow-hidden border border-stone-200 hover:-translate-y-2 hover:shadow-xl hover:border-gold/40 transition-all duration-300 group" style={{ borderRadius: 0 }}>
               <div className={`h-40 bg-gradient-to-br ${a.color} relative flex items-center justify-center overflow-hidden`}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="text-5xl opacity-20 group-hover:opacity-35 transition-opacity">{a.icon}</div>
@@ -128,7 +128,7 @@ export default function NearbyPage() {
                 <p className="text-sm text-charcoal-muted leading-relaxed mb-4">{a.desc}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {a.tags.map(tag => (
-                    <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-ivory-dark text-charcoal-muted">{tag}</span>
+                    <span key={tag} className="text-xs px-2.5 py-1 bg-[#F2EDE4] text-charcoal-muted" style={{ borderRadius: 0 }}>{tag}</span>
                   ))}
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function NearbyPage() {
         </div>
 
         {/* Map CTA */}
-        <div className="mt-14 rounded-2xl p-8 text-center text-white" style={{ background: 'linear-gradient(135deg, #4A0F1D, #6B1A2B)' }}>
+        <div className="mt-14 p-8 text-center text-white" style={{ borderRadius: 0, background: 'linear-gradient(135deg, #4A0F1D, #6B1A2B)' }}>
           <h2 className="font-serif text-2xl mb-3">Plan Your Stay Around These Attractions</h2>
           <p className="text-white/70 max-w-lg mx-auto mb-6">
             Our front desk team can help arrange transportation, suggest itineraries, and make sure you don't miss a single highlight of the Narmada Valley.

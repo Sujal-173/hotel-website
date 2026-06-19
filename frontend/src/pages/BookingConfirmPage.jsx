@@ -36,8 +36,8 @@ export default function BookingConfirmPage() {
       <Helmet><title>Booking Confirmed – Yashraj Palace</title></Helmet>
       <div className="min-h-screen bg-ivory-dark flex items-center justify-center px-4 py-16">
         <div className="max-w-lg w-full">
-          <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-lg text-center mb-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+          <div className="bg-white p-8 border border-stone-200 shadow-lg text-center mb-4" style={{ borderRadius: 0 }}>
+            <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-4 text-3xl" style={{ borderRadius: '50%' }}>
               {type === 'event' ? '🎊' : '✅'}
             </div>
             <h1 className="font-serif text-2xl font-semibold text-charcoal mb-2">
@@ -47,7 +47,7 @@ export default function BookingConfirmPage() {
             <p className="font-mono font-bold text-maroon text-xl mb-4">{id}</p>
 
             {data && type === 'room' && (
-              <div className="bg-ivory-dark rounded-xl p-4 text-left space-y-2 text-sm mb-6">
+              <div className="p-4 text-left space-y-2 text-sm mb-6" style={{ background: '#F2EDE4', borderRadius: 0 }}>
                 <div className="flex justify-between"><span className="text-charcoal-muted">Guest</span><span className="font-medium">{data.guestDetails?.name}</span></div>
                 <div className="flex justify-between"><span className="text-charcoal-muted">Room</span><span>{data.room?.name}</span></div>
                 <div className="flex justify-between"><span className="text-charcoal-muted">Check-In</span><span>{new Date(data.checkIn).toDateString()}</span></div>
@@ -67,7 +67,7 @@ export default function BookingConfirmPage() {
             )}
 
             {data && type === 'event' && (
-              <div className="bg-ivory-dark rounded-xl p-4 text-left space-y-2 text-sm mb-6">
+              <div className="p-4 text-left space-y-2 text-sm mb-6" style={{ background: '#F2EDE4', borderRadius: 0 }}>
                 <div className="flex justify-between"><span className="text-charcoal-muted">Contact</span><span className="font-medium">{data.contactDetails?.name}</span></div>
                 <div className="flex justify-between capitalize"><span className="text-charcoal-muted">Event</span><span>{data.eventType}</span></div>
                 <div className="flex justify-between"><span className="text-charcoal-muted">Date</span><span>{new Date(data.eventDetails?.eventDate).toDateString()}</span></div>

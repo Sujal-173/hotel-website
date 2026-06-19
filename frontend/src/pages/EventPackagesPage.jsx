@@ -116,14 +116,14 @@ export default function EventPackagesPage() {
       </div>
 
       {/* Category filter */}
-      <div className="bg-white border-b border-gray-100 py-4 px-4 sticky top-16 z-30 overflow-x-auto">
-        <div className="flex gap-2 max-w-7xl mx-auto min-w-max">
+      <div className="bg-[#FAF7F2] border-b py-4 px-4 sticky top-16 z-30 overflow-x-auto" style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
+        <div className="flex gap-1.5 max-w-7xl mx-auto min-w-max">
           {cats.map(c => (
             <button key={c} onClick={() => setFilter(c)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all capitalize ${
-                filter === c ? 'text-white' : 'bg-ivory-dark text-charcoal-muted hover:text-maroon'
+              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
+                filter === c ? 'text-white border-maroon' : 'bg-[#F2EDE4] text-stone-600 border-[#E8E0D8] hover:text-maroon hover:border-gold'
               }`}
-              style={filter === c ? { background: 'linear-gradient(135deg, #8B2238, #6B1A2B)' } : {}}>
+              style={{ borderRadius: 0, background: filter === c ? 'linear-gradient(135deg, #8B2238, #6B1A2B)' : undefined }}>
               {c}
             </button>
           ))}
@@ -137,7 +137,7 @@ export default function EventPackagesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(pkg => (
               <div key={pkg._id}
-                className={`bg-white rounded-2xl overflow-hidden relative transition-all duration-300 hover:-translate-y-2 ${
+                className={`bg-white overflow-hidden relative transition-all duration-300 hover:-translate-y-2 ${
                   pkg.badge === 'Most Popular'
                     ? 'border-2 border-gold shadow-xl hover:shadow-2xl'
                     : 'border border-gray-100 shadow-sm hover:shadow-lg'
@@ -182,7 +182,7 @@ export default function EventPackagesPage() {
                   )}
                   <Link
                     to={`/events/book?package=${pkg._id}`}
-                    className={`block text-center text-sm py-2.5 rounded-lg font-semibold transition-all ${
+                    className={`block text-center text-xs py-3 uppercase tracking-wider font-bold transition-all ${
                       pkg.badge === 'Most Popular' ? 'btn-primary' : 'btn-outline'
                     }`}>
                     Book This Package
@@ -194,14 +194,14 @@ export default function EventPackagesPage() {
         )}
 
         {/* Custom quote */}
-        <div className="mt-14 rounded-2xl p-8 text-center text-white" style={{ background: 'linear-gradient(135deg, #4A0F1D, #6B1A2B)' }}>
+        <div className="mt-14 p-8 text-center text-white" style={{ borderRadius: 0, background: 'linear-gradient(135deg, #4A0F1D, #6B1A2B)' }}>
           <h2 className="font-serif text-2xl mb-3">Need a Custom Package?</h2>
           <p className="text-white/70 max-w-lg mx-auto mb-6">
             Our events team can build a custom package tailored to your exact guest count, budget, venue preferences, and catering requirements.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/events/book" className="btn-gold text-sm px-7">Request Custom Quote</Link>
-            <a href="tel:+917000000000" className="border-2 border-white/40 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-white/10 transition-all">
+            <a href="tel:+917000000000" className="border-2 border-white/40 text-white px-6 py-3 font-semibold text-sm hover:bg-white/10 transition-all" style={{ borderRadius: 0 }}>
               📞 Call Now
             </a>
           </div>
@@ -217,7 +217,7 @@ export default function EventPackagesPage() {
               ['Can I customise a package?', 'Absolutely. Contact our events team to build a package tailored to your guest count, venue, budget, and catering needs.'],
               ['How far in advance should I book?', 'We recommend booking 3–6 months ahead for weddings (peak Oct–Feb) and 1–2 months for other events. Call or WhatsApp to check your date.'],
             ].map(([q, a]) => (
-              <div key={q} className="bg-ivory-dark rounded-2xl p-5">
+              <div key={q} className="p-5 border border-stone-200" style={{ background: '#F2EDE4', borderRadius: 0 }}>
                 <p className="font-semibold text-charcoal text-sm mb-2">{q}</p>
                 <p className="text-sm text-charcoal-muted">{a}</p>
               </div>

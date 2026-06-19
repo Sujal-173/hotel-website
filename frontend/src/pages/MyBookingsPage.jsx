@@ -61,7 +61,7 @@ export default function MyBookingsPage() {
           {loading ? (
             <div className="flex justify-center py-20"><div className="spinner" /></div>
           ) : bookings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-16 text-center border border-gray-100 shadow-sm">
+            <div className="bg-white p-16 text-center border border-stone-200" style={{ borderRadius: 0 }}>
               <div className="text-6xl mb-4">🏨</div>
               <h2 className="font-serif text-2xl font-semibold text-charcoal mb-2">No bookings yet</h2>
               <p className="text-charcoal-muted mb-6">Plan your stay or event at Yashraj Palace.</p>
@@ -73,7 +73,7 @@ export default function MyBookingsPage() {
           ) : (
             <div className="space-y-4">
               {bookings.map(b => (
-                <div key={b._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
+                <div key={b._id} className="bg-white border border-stone-200 overflow-hidden flex flex-col md:flex-row" style={{ borderRadius: 0 }}>
                   <div className="md:w-48 h-32 md:h-auto bg-gradient-to-br from-ivory-dark to-[#D5C8B8] flex items-center justify-center shrink-0">
                     <span className="text-4xl opacity-20">🏨</span>
                   </div>
@@ -138,7 +138,7 @@ export default function MyBookingsPage() {
             </div>
           )}
 
-          <div className="mt-8 bg-maroon/5 border border-maroon/15 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="mt-8 bg-maroon/5 border border-maroon/15 p-5 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderRadius: 0 }}>
             <div>
               <div className="font-semibold text-charcoal text-sm">Need help with a booking?</div>
               <div className="text-xs text-charcoal-muted mt-0.5">Call or WhatsApp — 9 AM to 10 PM daily</div>

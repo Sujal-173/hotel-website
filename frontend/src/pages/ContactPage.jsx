@@ -129,7 +129,7 @@ export default function ContactPage() {
               )},
             ].map(item => (
               <div key={item.label} className="flex items-start gap-4">
-                <div className={`w-10 h-10 ${item.color} rounded-xl flex items-center justify-center text-white shrink-0`}>
+                <div className={`w-10 h-10 ${item.color} flex items-center justify-center text-white shrink-0`} style={{ borderRadius: 0 }}>
                   {item.icon}
                 </div>
                 <div>
@@ -149,11 +149,11 @@ export default function ContactPage() {
             <p className="text-sm font-semibold text-charcoal mb-3">Follow Us</p>
             <div className="flex gap-3">
               <a href="https://facebook.com/yashrajpalace" target="_blank" rel="noreferrer"
-                className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white hover:opacity-80 transition-opacity" aria-label="Facebook">
+                className="w-9 h-9 bg-blue-600 flex items-center justify-center text-white hover:opacity-80 transition-opacity" style={{ borderRadius: 0 }} aria-label="Facebook">
                 <FaFacebook size={16}/>
               </a>
               <a href="https://instagram.com/yashrajpalace" target="_blank" rel="noreferrer"
-                className="w-9 h-9 bg-pink-600 rounded-full flex items-center justify-center text-white hover:opacity-80 transition-opacity" aria-label="Instagram">
+                className="w-9 h-9 bg-pink-600 flex items-center justify-center text-white hover:opacity-80 transition-opacity" style={{ borderRadius: 0 }} aria-label="Instagram">
                 <FaInstagram size={16}/>
               </a>
             </div>
@@ -163,13 +163,13 @@ export default function ContactPage() {
         {/* Form */}
         <div>
           {submitted ? (
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center flex flex-col items-center justify-center h-full">
+            <div className="bg-green-50 border border-green-200 p-10 text-center flex flex-col items-center justify-center h-full" style={{ borderRadius: 0 }}>
               <div className="text-5xl mb-4">🙏</div>
               <h3 className="font-serif text-2xl font-semibold mb-3">Message Sent!</h3>
               <p className="text-charcoal-muted">Our team will contact you at <strong>{form.phone}</strong> within 2 hours.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm space-y-4">
+            <form onSubmit={handleSubmit} className="bg-white p-7 border border-stone-200 space-y-4" style={{ borderRadius: 0 }}>
               <h3 className="font-serif text-xl font-semibold mb-2">Send Us a Message</h3>
               <div>
                 <label className="label">Inquiry Type</label>

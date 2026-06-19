@@ -115,7 +115,7 @@ export default function RoomsPage() {
       </div>
 
       {/* Search bar */}
-      <div className="bg-white border-b border-gray-100 py-5 px-4 sticky top-16 z-30 shadow-sm">
+      <div className="bg-[#FAF7F2] border-b py-5 px-4 sticky top-16 z-30 shadow-sm" style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
         <div className="max-w-7xl mx-auto flex flex-wrap gap-3 items-end">
           <div>
             <label className="label">Check-In</label>
@@ -140,16 +140,16 @@ export default function RoomsPage() {
               <option value="suite">Family Suite</option>
             </select>
           </div>
-          <button className="btn-primary text-sm px-6 py-3">Search</button>
+          <button className="btn-primary text-xs px-6 py-3 uppercase tracking-wider">Search</button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-16">
         {/* Amenities strip */}
-        <div className="bg-ivory-dark rounded-2xl p-5 mb-12 flex flex-wrap gap-3 justify-center">
+        <div className="p-5 mb-12 flex flex-wrap gap-3 justify-center" style={{ background: '#F2EDE4', border: '1px solid rgba(201,168,76,0.2)' }}>
           <span className="text-xs font-semibold text-maroon uppercase tracking-wider w-full text-center mb-1">All rooms include</span>
           {AMENITIES.map(a => (
-            <div key={a} className="flex items-center gap-1.5 text-sm text-charcoal-muted bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
+            <div key={a} className="flex items-center gap-1.5 text-sm text-charcoal-muted bg-white px-3 py-1.5 border border-stone-200" style={{ borderRadius: 0 }}>
               <FiCheck className="text-gold" size={12} /> {a}
             </div>
           ))}
@@ -177,7 +177,7 @@ function RoomCard({ room, checkIn, checkOut, guests }) {
   const imgClass = IMG_CLASS[room.type] || 'room-img-default'
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+    <div className="bg-white border overflow-hidden flex flex-col md:flex-row group hover:shadow-xl hover:-translate-y-1 transition-all duration-300" style={{ borderColor: '#E8E0D8', borderRadius: 0 }}>
       <div className={`md:w-80 lg:w-96 h-56 md:h-auto ${imgClass} flex items-center justify-center shrink-0 relative`}>
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         {room.discountedPrice && (

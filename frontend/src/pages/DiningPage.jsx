@@ -87,8 +87,7 @@ export default function DiningPage() {
             </div>
             <Link to="/events/book" className="btn-primary text-sm">Enquire for Event Catering</Link>
           </div>
-          <div className="h-80 rounded-2xl relative overflow-hidden flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #2A1008, #4A1E0F)' }}>
+          <div className="h-80 relative overflow-hidden flex items-center justify-center" style={{ borderRadius: 0, background: 'linear-gradient(135deg, #2A1008, #4A1E0F)' }}>
             <div className="text-center">
               <div className="text-6xl mb-3 animate-float">🍛</div>
               <p className="font-serif text-xl italic" style={{ color: 'rgba(201,168,76,0.5)' }}>Restaurant &amp; Catering</p>
@@ -106,7 +105,7 @@ export default function DiningPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {MENU_HIGHLIGHTS.map(m => (
-              <div key={m.cat} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+              <div key={m.cat} className="bg-white p-5 border border-stone-200 hover:-translate-y-1 hover:shadow-md hover:border-gold/40 transition-all duration-300" style={{ borderRadius: 0 }}>
                 <h3 className="font-serif text-lg font-semibold text-maroon mb-4 pb-3 border-b border-gold/20">{m.cat}</h3>
                 <ul className="space-y-2">
                   {m.items.map(item => (
@@ -131,7 +130,7 @@ export default function DiningPage() {
           <p className="text-charcoal-muted max-w-xl mx-auto mb-10">From simple lunch buffets to multi-course wedding feasts with live counters — our kitchen team handles it all.</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
             {[['🍛','250+ Dish Menu'],['🎪','Live Counters'],['🌿','Veg &amp; Non-Veg'],['🍰','Dessert Stations'],['🥗','Salad &amp; Raita Bar'],['☕','Tea/Coffee Station'],['🍢','Starters &amp; Snacks'],['🎂','Custom Cake Orders']].map(([icon,text]) => (
-              <div key={text} className="bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+              <div key={text} className="bg-white p-4 text-center border border-stone-200 hover:-translate-y-1 hover:shadow-md hover:border-gold/40 transition-all duration-300" style={{ borderRadius: 0 }}>
                 <div className="text-3xl mb-2">{icon}</div>
                 <div className="text-sm font-medium text-charcoal" dangerouslySetInnerHTML={{ __html: text }} />
               </div>

@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
 @layer base {
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -16,9 +18,10 @@
 
 @layer components {
 
-  /* ── BUTTONS ─────────────────────────────────────── */
+  /* ── BUTTONS — sharp palace style ────────────────────── */
   .btn-primary {
-    @apply relative overflow-hidden text-white px-6 py-3 rounded-lg font-semibold text-sm tracking-wide inline-block cursor-pointer border-none;
+    @apply relative overflow-hidden text-white px-6 py-3 font-semibold text-sm tracking-wide inline-block cursor-pointer border-none;
+    border-radius: 0;
     background: linear-gradient(135deg, #8B2238 0%, #6B1A2B 60%, #4A0F1D 100%);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -26,49 +29,52 @@
     content: '';
     position: absolute;
     top: 0; left: -120%; width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
     transform: skewX(-20deg);
     transition: left 0.55s ease;
   }
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(107, 26, 43, 0.38);
+    box-shadow: 0 8px 28px rgba(107, 26, 43, 0.42);
   }
   .btn-primary:hover::after { left: 160%; }
   .btn-primary:active { transform: translateY(0); }
 
   .btn-outline {
-    @apply border-2 border-maroon text-maroon px-6 py-3 rounded-lg font-semibold text-sm tracking-wide inline-block cursor-pointer bg-transparent;
+    @apply border-2 border-maroon text-maroon px-6 py-3 font-semibold text-sm tracking-wide inline-block cursor-pointer bg-transparent;
+    border-radius: 0;
     transition: all 0.2s ease;
   }
   .btn-outline:hover {
     @apply bg-maroon text-white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(107, 26, 43, 0.22);
+    box-shadow: 0 6px 22px rgba(107, 26, 43, 0.25);
   }
 
   .btn-gold {
-    @apply relative overflow-hidden text-charcoal px-6 py-3 rounded-lg font-bold text-sm tracking-wide inline-block cursor-pointer border-none;
+    @apply relative overflow-hidden text-charcoal px-6 py-3 font-bold text-sm tracking-wide inline-block cursor-pointer border-none;
+    border-radius: 0;
     background: linear-gradient(135deg, #E8C97A 0%, #C9A84C 50%, #B8943C 100%);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .btn-gold:hover {
     background: linear-gradient(135deg, #F0D48A 0%, #D9B85C 50%, #C8A44C 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(201, 168, 76, 0.4);
+    box-shadow: 0 8px 26px rgba(201, 168, 76, 0.45);
   }
 
   .btn-whatsapp {
-    @apply bg-green-500 text-white px-5 py-3 rounded-lg font-semibold text-sm inline-flex items-center gap-2 cursor-pointer border-none;
+    @apply bg-green-500 text-white px-5 py-3 font-semibold text-sm inline-flex items-center gap-2 cursor-pointer border-none;
+    border-radius: 0;
     transition: all 0.2s ease;
   }
   .btn-whatsapp:hover {
     @apply bg-green-600;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.38);
   }
 
-  /* ── TYPOGRAPHY ──────────────────────────────────── */
+  /* ── TYPOGRAPHY ──────────────────────────────────────── */
   .section-eyebrow {
     @apply text-gold font-semibold text-xs tracking-widest uppercase mb-2;
   }
@@ -76,75 +82,162 @@
     @apply font-serif text-3xl md:text-4xl font-semibold text-charcoal leading-tight mb-3;
   }
   .gold-divider {
-    @apply w-12 h-0.5 mb-4;
+    @apply w-12 h-0.5 mb-5;
     background: linear-gradient(90deg, #C9A84C, #E8C97A, #C9A84C);
   }
 
-  /* ── CARDS ───────────────────────────────────────── */
+  /* ── ORNAMENT DIVIDER (home page style) ──────────────── */
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.25rem 0;
+  }
+  .ornament-divider::before,
+  .ornament-divider::after {
+    content: '';
+    height: 1px;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, #C9A84C);
+  }
+  .ornament-divider::after {
+    background: linear-gradient(90deg, #C9A84C, transparent);
+  }
+  .ornament-divider-icon {
+    color: #C9A84C;
+    margin: 0 1rem;
+    font-size: 1rem;
+  }
+
+  /* ── CARDS ───────────────────────────────────────────── */
   .card {
-    @apply bg-white rounded-2xl shadow-sm border border-black/5 overflow-hidden;
+    @apply bg-white shadow-sm border border-black/5 overflow-hidden;
+    border-radius: 0;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 48px -8px rgba(107, 26, 43, 0.14), 0 4px 16px -2px rgba(0,0,0,0.08);
+    box-shadow: 0 20px 48px -8px rgba(107, 26, 43, 0.15), 0 4px 16px -2px rgba(0,0,0,0.08);
   }
 
-  /* ── FORM ────────────────────────────────────────── */
+  /* ── FORM ────────────────────────────────────────────── */
   .input-field {
-    @apply w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-sans text-charcoal bg-ivory focus:outline-none focus:border-maroon transition-colors duration-200;
+    @apply w-full border border-stone-200 px-4 py-3 text-sm font-sans text-charcoal bg-ivory focus:outline-none focus:border-maroon transition-colors duration-200;
+    border-radius: 0;
   }
   .input-field:focus {
-    box-shadow: 0 0 0 3px rgba(107, 26, 43, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 26, 43, 0.08);
   }
   .label {
     @apply block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-1.5;
   }
   .badge {
-    @apply text-xs font-bold px-3 py-1 rounded-full;
+    @apply text-xs font-bold px-3 py-1;
+    border-radius: 0;
   }
 
-  /* ── PAGE HERO ───────────────────────────────────── */
+  /* ── PAGE HERO ───────────────────────────────────────── */
   .page-hero {
-    @apply text-white py-24 px-4 relative overflow-hidden;
-    background: linear-gradient(135deg, #4A0F1D 0%, #6B1A2B 50%, #8B2238 100%);
+    @apply text-white py-28 px-4 relative overflow-hidden;
+    background: linear-gradient(135deg, #2E0912 0%, #4A0F1D 30%, #6B1A2B 65%, #8B2238 100%);
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.03) 0%, transparent 50%),
+      repeating-linear-gradient(45deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 50%);
+    background-size: auto, auto, 28px 28px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  /* Ornamental corner brackets in page hero */
+  .page-hero-inner {
+    position: relative;
+  }
+  .page-hero-inner::before,
+  .page-hero-inner::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-color: rgba(201,168,76,0.5);
+    border-style: solid;
+  }
+  .page-hero-inner::before {
+    top: -12px; left: 50%; transform: translateX(-50%);
+    border-width: 1px 0 0 0;
+    width: 120px;
   }
 
-  /* ── GLASS CARD ──────────────────────────────────── */
+  /* ── GLASS CARD ──────────────────────────────────────── */
   .glass-card {
     background: rgba(255,255,255,0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.15);
-    @apply rounded-2xl;
   }
 
-  /* ── GOLD BADGE ──────────────────────────────────── */
+  /* ── GOLD BADGE ──────────────────────────────────────── */
   .gold-badge {
-    @apply inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full;
+    @apply inline-flex items-center gap-1 text-xs font-bold px-3 py-1;
     background: linear-gradient(135deg, #E8C97A, #C9A84C);
     color: #1C1C1E;
+    border-radius: 0;
+  }
+
+  /* ── PALACE CORNER CARD ──────────────────────────────── */
+  .palace-card {
+    @apply bg-white border border-stone-200 relative overflow-visible;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .palace-card::before { content: ''; position: absolute; top: -1px; left: -1px; width: 18px; height: 18px; border-top: 2px solid #C9A84C; border-left: 2px solid #C9A84C; }
+  .palace-card::after  { content: ''; position: absolute; bottom: -1px; right: -1px; width: 18px; height: 18px; border-bottom: 2px solid #C9A84C; border-right: 2px solid #C9A84C; }
+  .palace-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px -8px rgba(107,26,43,0.18);
+  }
+
+  /* ── FILTER PILL (sharp tab style) ───────────────────── */
+  .filter-pill {
+    @apply px-4 py-2 text-sm font-semibold transition-all uppercase tracking-wider text-xs;
+    border-radius: 0;
+    border: 1px solid transparent;
+  }
+  .filter-pill-active {
+    background: linear-gradient(135deg, #8B2238, #6B1A2B);
+    color: white;
+  }
+  .filter-pill-inactive {
+    @apply text-stone-600 hover:text-maroon;
+    background: #F2EDE4;
+    border-color: #E8E0D8;
+  }
+  .filter-pill-inactive:hover {
+    border-color: #C9A84C;
   }
 
 }
 
-/* ── SCROLLBAR ───────────────────────────────────────── */
+/* ── SCROLLBAR ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #FAF7F2; }
-::-webkit-scrollbar-thumb { background: linear-gradient(#8B2238, #6B1A2B); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: linear-gradient(#8B2238, #6B1A2B); border-radius: 0; }
 
-/* ── REACT DATEPICKER ────────────────────────────────── */
+/* ── REACT DATEPICKER ────────────────────────────────────── */
 .react-datepicker-wrapper { width: 100%; }
 .react-datepicker__input-container input { @apply input-field; }
 .react-datepicker__header { background: #6B1A2B !important; color: white; border-bottom: none !important; }
 .react-datepicker__current-month, .react-datepicker__day-name { color: white !important; }
-.react-datepicker__day--selected { background: #6B1A2B !important; border-radius: 6px !important; }
-.react-datepicker__day--keyboard-selected { background: #8B2238 !important; border-radius: 6px !important; }
-.react-datepicker__day:hover { background: #F2EDE4 !important; border-radius: 6px !important; }
-.react-datepicker { border: 1px solid #E8E0D8 !important; border-radius: 12px !important; overflow: hidden; }
+.react-datepicker__day--selected { background: #6B1A2B !important; border-radius: 0 !important; }
+.react-datepicker__day--keyboard-selected { background: #8B2238 !important; border-radius: 0 !important; }
+.react-datepicker__day:hover { background: #F2EDE4 !important; border-radius: 0 !important; }
+.react-datepicker { border: 1px solid #E8E0D8 !important; border-radius: 0 !important; overflow: hidden; }
 .react-datepicker-popper { z-index: 100 !important; }
 
-/* ── ANIMATIONS ──────────────────────────────────────── */
+/* ── ANIMATIONS ──────────────────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -185,7 +278,7 @@
 .stagger-children > *:nth-child(5) { animation-delay: 0.33s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.40s; }
 
-/* ── GOLD SHIMMER TEXT ───────────────────────────────── */
+/* ── GOLD SHIMMER TEXT ───────────────────────────────────── */
 .gold-shimmer-text {
   background: linear-gradient(90deg, #C9A84C 0%, #E8C97A 40%, #C9A84C 60%, #B8943C 100%);
   background-size: 200% auto;
@@ -195,7 +288,7 @@
   animation: shimmer 4s linear infinite;
 }
 
-/* ── SCROLL REVEAL ───────────────────────────────────── */
+/* ── SCROLL REVEAL ───────────────────────────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(32px);
@@ -210,17 +303,17 @@
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 
-/* ── HERO PATTERN ────────────────────────────────────── */
+/* ── HERO PATTERN ────────────────────────────────────────── */
 .hero-pattern {
   background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.07) 0%, transparent 60%),
     radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 50%),
     repeating-linear-gradient(45deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 50%);
   background-size: auto, auto, 28px 28px;
   opacity: 0.8;
 }
 
-/* ── LOADING SPINNER ─────────────────────────────────── */
+/* ── LOADING SPINNER ─────────────────────────────────────── */
 .spinner {
   border: 3px solid #F2EDE4;
   border-top: 3px solid #6B1A2B;
@@ -229,76 +322,76 @@
   animation: spin 0.8s linear infinite;
 }
 
-/* ── ROOM IMAGE GRADIENTS ────────────────────────────── */
+/* ── ROOM IMAGE GRADIENTS ────────────────────────────────── */
 .room-img-deluxe  { background: linear-gradient(135deg, #D5C4B0 0%, #C8B89A 40%, #B8A880 100%); }
 .room-img-premium { background: linear-gradient(135deg, #C4A882 0%, #A8845A 40%, #8B6A3A 100%); }
 .room-img-suite   { background: linear-gradient(135deg, #B8A094 0%, #9A8070 40%, #7A6050 100%); }
 .room-img-default { background: linear-gradient(135deg, #D5C8B8 0%, #C0B0A0 100%); }
 
-/* ── SECTION ACCENT LINE ─────────────────────────────── */
+/* ── SECTION ACCENT LINE ─────────────────────────────────── */
 .section-accent {
   width: 48px; height: 3px;
   background: linear-gradient(90deg, #C9A84C, #E8C97A);
-  border-radius: 2px;
+  border-radius: 0;
   margin-bottom: 1rem;
 }
 
-/* ── FAQ ACCORDION ───────────────────────────────────── */
+/* ── FAQ ACCORDION ───────────────────────────────────────── */
 .faq-item {
   border: 1px solid #E8E0D8;
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .faq-item:hover { border-color: #C9A84C; }
-.faq-item.open  { border-color: #C9A84C; box-shadow: 0 4px 20px rgba(201,168,76,0.1); }
+.faq-item.open  { border-color: #C9A84C; box-shadow: 0 4px 20px rgba(201,168,76,0.12); }
+.faq-answer { animation: slideDown 0.25s ease-out; }
 
-.faq-answer {
-  animation: slideDown 0.25s ease-out;
-}
-
-/* ── USP CARD ────────────────────────────────────────── */
+/* ── USP CARD ────────────────────────────────────────────── */
 .usp-card {
-  @apply text-center p-6 rounded-2xl cursor-default;
+  @apply text-center p-6 cursor-default;
+  border-radius: 0;
   background: #F2EDE4;
+  border: 1px solid #E8E0D8;
   transition: all 0.3s ease;
 }
 .usp-card:hover {
   background: #6B1A2B;
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(107,26,43,0.2);
+  box-shadow: 0 12px 32px rgba(107,26,43,0.22);
+  border-color: #6B1A2B;
 }
 .usp-card:hover .usp-title  { color: #ffffff; }
 .usp-card:hover .usp-sub    { color: rgba(255,255,255,0.65); }
 
-/* ── PAGE TRANSITIONS ────────────────────────────────── */
+/* ── PAGE TRANSITIONS ────────────────────────────────────── */
 .page-enter { opacity: 0; transform: translateY(10px); }
 .page-enter-active { opacity: 1; transform: translateY(0); transition: opacity 300ms, transform 300ms; }
 
-/* ── GRAND CLASSIC: ORNAMENTAL BORDER ───────────────── */
+/* ── ORNAMENTAL BORDER ───────────────────────────────────── */
 .ornamental-border {
   position: relative;
-  border: 1px solid #C9A84C;
+  border: 1px solid rgba(201,168,76,0.4);
   padding: 2rem;
 }
-.ornamental-border::before,
+.ornamental-border::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: -4px;
+  width: 22px; height: 22px;
+  border-top: 2px solid #C9A84C;
+  border-left: 2px solid #C9A84C;
+}
 .ornamental-border::after {
   content: '';
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #C9A84C;
-}
-.ornamental-border::before {
-  top: -4px; left: -4px;
-  border-right: none; border-bottom: none;
-}
-.ornamental-border::after {
   bottom: -4px; right: -4px;
-  border-left: none; border-top: none;
+  width: 22px; height: 22px;
+  border-bottom: 2px solid #C9A84C;
+  border-right: 2px solid #C9A84C;
 }
 
-/* ── GRAND CLASSIC: SHARP BUTTONS ───────────────────── */
+/* ── GRAND CLASSIC: SHARP BUTTONS ───────────────────────── */
 .btn-gc-primary {
   display: inline-block;
   background-color: #6B1A2B;
@@ -309,6 +402,7 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   border: none;
+  border-radius: 0;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -324,10 +418,11 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   border: none;
+  border-radius: 0;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-.btn-gc-gold:hover { background-color: #FAF7F2; }
+.btn-gc-gold:hover { background-color: #E8C97A; }
 
 .btn-gc-outline {
   display: inline-block;
@@ -339,32 +434,20 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   border: 1px solid #6B1A2B;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .btn-gc-outline:hover { background-color: #6B1A2B; color: #FAF7F2; }
 
-/* ── MOBILE RESPONSIVE FIXES ────────────────────────── */
+/* ── MOBILE RESPONSIVE FIXES ────────────────────────────── */
 @media (max-width: 640px) {
-  /* Hero section — reduce padding on small screens */
   .hero-ornamental-frame { padding: 1.5rem !important; }
-
-  /* Trust bar — don't pull it UP on mobile (overlaps hero) */
   .trust-bar-float { margin-top: 0 !important; margin-left: 0 !important; margin-right: 0 !important; }
-
-  /* Section headings — smaller on mobile */
   .section-title { font-size: 1.75rem !important; }
-
-  /* Page hero — reduce padding */
   .page-hero { padding-top: 5rem !important; padding-bottom: 5rem !important; }
-
-  /* Admin sidebar — ensure full width close button is reachable */
   .admin-nav-label { font-size: 0.8125rem; }
-
-  /* Booking widget — full width on mobile */
   .booking-widget { max-width: 100% !important; }
-
-  /* Contact form grid — single column on very small screens */
   .contact-grid-2 { grid-template-columns: 1fr !important; }
 }
 
@@ -395,3 +478,64 @@
   50%       { box-shadow: 0 4px 28px rgba(37,211,102,0.65), 0 0 0 8px rgba(37,211,102,0.12); }
 }
 .wa-float { animation: wa-pulse 2.5s ease-in-out infinite; }
+
+/* ── PALACE SECTION HEADER ───────────────────────────────── */
+.palace-section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.palace-section-header .eyebrow {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #C9A84C;
+  margin-bottom: 0.75rem;
+}
+.palace-section-header h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #4A0F1D;
+  line-height: 1.2;
+}
+@media (min-width: 768px) {
+  .palace-section-header h2 { font-size: 2.75rem; }
+}
+.palace-section-header .divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+  gap: 0.75rem;
+}
+.palace-section-header .divider::before,
+.palace-section-header .divider::after {
+  content: '';
+  display: block;
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, #C9A84C);
+}
+.palace-section-header .divider::after {
+  background: linear-gradient(90deg, #C9A84C, transparent);
+}
+.palace-section-header .divider-icon {
+  color: #C9A84C;
+  font-size: 0.9rem;
+}
+
+/* ── MAROON INFO CARD ────────────────────────────────────── */
+.info-card {
+  @apply p-5 border;
+  border-radius: 0;
+  background: #FFFFFF;
+  border-color: #E8E0D8;
+  transition: all 0.25s ease;
+}
+.info-card:hover {
+  border-color: rgba(201,168,76,0.5);
+  box-shadow: 0 8px 28px rgba(107,26,43,0.10);
+  transform: translateY(-3px);
+}

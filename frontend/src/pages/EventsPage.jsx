@@ -84,12 +84,12 @@ export default function EventsPage() {
       </div>
 
       {/* Event type tabs */}
-      <div className="bg-white border-b border-gray-100 py-4 px-4 sticky top-16 z-30 overflow-x-auto">
-        <div className="flex gap-2 max-w-7xl mx-auto min-w-max">
-          <Link to="/events" className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!type ? 'bg-maroon text-white' : 'text-charcoal-muted hover:text-maroon bg-ivory-dark'}`}>All Events</Link>
+      <div className="bg-[#FAF7F2] border-b py-4 px-4 sticky top-16 z-30 overflow-x-auto" style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
+        <div className="flex gap-1.5 max-w-7xl mx-auto min-w-max">
+          <Link to="/events" className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all ${!type ? 'bg-maroon text-white' : 'text-stone-600 hover:text-maroon bg-[#F2EDE4] border border-[#E8E0D8] hover:border-gold'}`} style={{ borderRadius: 0 }}>All Events</Link>
           {Object.entries(EVENT_DETAILS).map(([slug, ev]) => (
             <Link key={slug} to={`/events/${slug}`}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${type === slug ? 'bg-maroon text-white' : 'text-charcoal-muted hover:text-maroon bg-ivory-dark'}`}>
+              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${type === slug ? 'bg-maroon text-white' : 'text-stone-600 hover:text-maroon bg-[#F2EDE4] border border-[#E8E0D8] hover:border-gold'}`} style={{ borderRadius: 0 }}>
               {ev.icon} {ev.title}
             </Link>
           ))}
@@ -107,7 +107,7 @@ export default function EventsPage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {GARDEN_FEATURES.map(f => (
-              <div key={f.title} className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:border-maroon/30 hover:shadow-md transition-all">
+              <div key={f.title} className="bg-white p-5 border border-stone-200 hover:border-gold/50 hover:shadow-md transition-all" style={{ borderRadius: 0 }}>
                 <div className="text-3xl mb-3">{f.icon}</div>
                 <div className="font-semibold text-sm text-charcoal mb-1">{f.title}</div>
                 <div className="text-xs text-charcoal-muted leading-relaxed">{f.val}</div>
@@ -127,12 +127,12 @@ export default function EventsPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {PACKAGES_PREVIEW.map(p => (
-              <div key={p.name} className={`bg-white rounded-xl p-6 text-center relative ${p.tag === 'Most Popular' ? 'border-2 border-gold shadow-lg' : 'border border-gray-100 shadow-sm'}`}>
+              <div key={p.name} className={`bg-white p-6 text-center relative ${p.tag === 'Most Popular' ? 'border-2 border-gold shadow-lg' : 'border border-stone-200'}`} style={{ borderRadius: 0 }}>
                 {p.tag && <div className="badge bg-gold text-charcoal mb-3 inline-block">{p.tag}</div>}
                 <h3 className="font-serif text-xl font-semibold mb-1">{p.name}</h3>
                 <p className="text-xs text-charcoal-muted mb-4">{p.guests}</p>
                 <div className="font-serif text-3xl font-semibold text-maroon mb-4">{p.price}</div>
-                <Link to="/events/book" className={`block text-sm py-2.5 rounded font-semibold transition-all ${p.tag === 'Most Popular' ? 'btn-primary' : 'btn-outline'}`}>Book Now</Link>
+                <Link to="/events/book" className={`block text-xs py-3 font-bold uppercase tracking-wider transition-all ${p.tag === 'Most Popular' ? 'btn-primary' : 'btn-outline'}`}>Book Now</Link>
               </div>
             ))}
           </div>

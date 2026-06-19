@@ -60,12 +60,12 @@ export default function GalleryPage() {
       </div>
 
       {/* Filter */}
-      <div className="bg-white border-b border-gray-100 py-4 px-4 sticky top-16 z-30 overflow-x-auto">
-        <div className="flex gap-2 max-w-7xl mx-auto min-w-max">
+      <div className="bg-[#FAF7F2] border-b py-4 px-4 sticky top-16 z-30 overflow-x-auto" style={{ borderColor: 'rgba(201,168,76,0.25)' }}>
+        <div className="flex gap-1.5 max-w-7xl mx-auto min-w-max">
           {CATEGORIES.map(c => (
             <button key={c} onClick={() => setFilter(c)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all capitalize ${filter === c ? 'text-white' : 'bg-ivory-dark text-charcoal-muted hover:text-maroon'}`}
-              style={filter === c ? { background: 'linear-gradient(135deg, #8B2238, #6B1A2B)' } : {}}>
+              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all capitalize border ${filter === c ? 'text-white border-maroon' : 'bg-[#F2EDE4] text-stone-600 border-[#E8E0D8] hover:text-maroon hover:border-gold'}`}
+              style={{ borderRadius: 0, background: filter === c ? 'linear-gradient(135deg, #8B2238, #6B1A2B)' : undefined }}>
               {c}
             </button>
           ))}
@@ -79,7 +79,7 @@ export default function GalleryPage() {
           <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
             {shown.map((img, i) => (
               <div key={img._id} onClick={() => setSelected(img)}
-                className={`break-inside-avoid rounded-xl overflow-hidden cursor-zoom-in group relative bg-gradient-to-br ${img.color || 'from-maroon-dark to-maroon'} ${i % 5 === 0 ? 'h-56' : i % 3 === 0 ? 'h-40' : 'h-48'}`}>
+                className={`break-inside-avoid overflow-hidden cursor-zoom-in group relative bg-gradient-to-br ${img.color || 'from-maroon-dark to-maroon'} ${i % 5 === 0 ? 'h-56' : i % 3 === 0 ? 'h-40' : 'h-48'}`} style={{ borderRadius: 0 }}>
                 {img.url ? (
                   <img src={img.url} alt={img.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
@@ -98,11 +98,11 @@ export default function GalleryPage() {
       {selected && (
         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <button className="absolute top-4 right-4 text-white text-3xl hover:text-gold" onClick={() => setSelected(null)}>×</button>
-          <div className="max-w-3xl max-h-[80vh] rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="max-w-3xl max-h-[80vh] overflow-hidden" style={{ borderRadius: 0 }} onClick={e => e.stopPropagation()}>
             {selected.url ? (
               <img src={selected.url} alt={selected.alt} className="w-full h-full object-contain" />
             ) : (
-              <div className={`w-96 h-64 bg-gradient-to-br ${selected.color || 'from-maroon-dark to-maroon'} flex items-center justify-center rounded-xl`}>
+              <div className={`w-96 h-64 bg-gradient-to-br ${selected.color || 'from-maroon-dark to-maroon'} flex items-center justify-center`} style={{ borderRadius: 0 }}>
                 <span className="text-white/40 font-serif text-2xl capitalize">{selected.category}</span>
               </div>
             )}
