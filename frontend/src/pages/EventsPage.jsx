@@ -51,6 +51,11 @@ export default function EventsPage() {
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={`https://www.yashrajpalace.com/events${type ? `/${type}` : ''}`} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={`https://www.yashrajpalace.com/events${type ? `/${type}` : ''}`} />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       {/* Hero */}

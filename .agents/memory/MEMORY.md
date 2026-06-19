@@ -1,0 +1,3 @@
+- [Yashraj Palace SEO Architecture](yashraj-seo.md) — Hotel + FAQPage + AggregateRating + HotelRoom + EventVenue JSON-LD across pages; FAQ accordion on HomePage is key AEO element
+- [Yashraj Palace CSS System](yashraj-css.md) — Premium CSS in index.css: reveal/visible scroll animation, gold-shimmer-text, usp-card, faq-item, btn-primary with gradient+shine; Tailwind custom colors maroon/gold/ivory/charcoal
+- [Yashraj Palace Export Pattern](yashraj-exports.md) — All pages must use `export default function` only (no named exports); DiningPage/ReviewsPage/EventPackagesPage/NearbyPage previously had dual exports causing HMR issues

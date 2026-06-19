@@ -33,8 +33,21 @@ export default function GalleryPage() {
   return (
     <>
       <Helmet>
-        <title>Gallery – Yashraj Palace | Rooms, Weddings, Events, Garden</title>
-        <meta name="description" content="View photos of rooms, wedding garden, banquet hall, food and events at Yashraj Palace near Maheshwar and Mandleshwar, Madhya Pradesh." />
+        <title>Gallery – Yashraj Palace | Rooms, Weddings, Garden &amp; Events | Maheshwar</title>
+        <meta name="description" content="View photos of rooms, wedding garden, banquet hall, restaurant, and events at Yashraj Palace near Maheshwar and Mandleshwar, Madhya Pradesh." />
+        <link rel="canonical" href="https://www.yashrajpalace.com/gallery" />
+        <meta property="og:title" content="Gallery – Yashraj Palace | Rooms, Weddings, Garden &amp; Events" />
+        <meta property="og:description" content="Browse photos of rooms, wedding garden, banquet hall, food, and events at Yashraj Palace near Maheshwar, MP." />
+        <meta property="og:url" content="https://www.yashrajpalace.com/gallery" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.yashrajpalace.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Gallery', item: 'https://www.yashrajpalace.com/gallery' },
+          ],
+        })}</script>
       </Helmet>
 
       <div className="page-hero">
@@ -51,7 +64,8 @@ export default function GalleryPage() {
         <div className="flex gap-2 max-w-7xl mx-auto min-w-max">
           {CATEGORIES.map(c => (
             <button key={c} onClick={() => setFilter(c)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all capitalize ${filter === c ? 'bg-maroon text-white' : 'bg-ivory-dark text-charcoal-muted hover:text-maroon'}`}>
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all capitalize ${filter === c ? 'text-white' : 'bg-ivory-dark text-charcoal-muted hover:text-maroon'}`}
+              style={filter === c ? { background: 'linear-gradient(135deg, #8B2238, #6B1A2B)' } : {}}>
               {c}
             </button>
           ))}

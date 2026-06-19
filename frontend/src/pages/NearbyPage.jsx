@@ -1,64 +1,155 @@
-// NearbyPage.jsx
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
+import { FiMapPin, FiClock } from 'react-icons/fi'
 
 const ATTRACTIONS = [
-  { name: 'Maheshwar Fort', dist: '12 km', time: '18 min', desc: 'A majestic fort on the banks of the Narmada river, built by Queen Ahilyabai Holkar. Explore the palace, temples, and riverside ghats within the fort complex.', tips: ['Best visited early morning or evening','Boats available for Narmada ride','Try handloom Maheshwari saris nearby'], color: 'from-blue-900 to-blue-700', icon: '🏯' },
-  { name: 'Narmada Ghat', dist: '14 km', time: '20 min', desc: 'Sacred ghats along the Narmada river at Maheshwar. A serene spot for sunrise, sunset, and the evening aarti that draws pilgrims and travellers alike.', tips: ['Evening aarti at 7 PM is unmissable','Boat rides available on the river','Clean and well-maintained ghats'], color: 'from-teal-900 to-teal-700', icon: '🌊' },
-  { name: 'Mandleshwar', dist: '2 km', time: '5 min', desc: 'The town adjacent to Yashraj Palace — a historic town with ancient temples, the Narmada river, and a vibrant local market. Perfect for an evening stroll.', tips: ['Mandleshwar Dam is worth visiting','Local bazaar for authentic MP goods','Several ancient temples in town'], color: 'from-purple-900 to-purple-700', icon: '🕌' },
-  { name: 'Omkareshwar', dist: '38 km', time: '50 min', desc: 'One of the 12 Jyotirlingas of Lord Shiva — a sacred island temple on the Narmada. A deeply spiritual site that draws devotees from across India.', tips: ['Parikrama (circumambulation) is popular','Boat from the ghat to the island','Morning aarti is especially peaceful'], color: 'from-green-900 to-green-700', icon: '⛩' },
-  { name: 'Maheshwari Saree Market', dist: '13 km', time: '20 min', desc: 'Maheshwar is the birthplace of the famous Maheshwari silk saris — handwoven by local craftspeople. Visit the weavers and buy directly.', tips: ['Visit Rehwa Society for authentic sarees','Handloom workshops open to visitors','Good for gifts and souvenirs'], color: 'from-pink-900 to-pink-700', icon: '🧵' },
-  { name: 'Narmada Dam', dist: '3 km', time: '6 min', desc: 'The Mandleshwar Dam on the Narmada river, visible from the town. A popular spot for an evening walk and local viewpoint photography.', tips: ['Best at sunrise or sunset','Free entry','Nearby chai stalls open late'], color: 'from-cyan-900 to-cyan-700', icon: '🌉' },
+  {
+    name: 'Maheshwar Fort & Temple',
+    dist: '12 km · 18 min drive',
+    desc: 'The iconic Ahilya Fort on the Narmada bank — a must-visit landmark of Madhya Pradesh with stunning river views and historic temples.',
+    tags: ['Historic Fort', 'River View', 'Temples', 'Photography'],
+    color: 'from-blue-950 to-blue-800',
+    icon: '🏯',
+  },
+  {
+    name: 'Narmada Ghat, Maheshwar',
+    dist: '14 km · 20 min drive',
+    desc: 'Sacred ghats along the Narmada River — ideal for sunrise visits, boat rides, and witnessing the Ahilya Ghat aarti.',
+    tags: ['Spiritual', 'Boat Ride', 'Sunrise', 'Aarti'],
+    color: 'from-teal-950 to-teal-700',
+    icon: '🌊',
+  },
+  {
+    name: 'Mandleshwar Town',
+    dist: '2 km · 5 min drive',
+    desc: 'A historic town with the Mandleshwar temple complex, local markets, and the famous Narmada bridge with scenic views.',
+    tags: ['Temple', 'Local Market', 'Scenic Bridge'],
+    color: 'from-purple-950 to-purple-700',
+    icon: '🕌',
+  },
+  {
+    name: 'Omkareshwar Temple',
+    dist: '38 km · 50 min drive',
+    desc: 'One of the 12 Jyotirlingas of Lord Shiva — a major pilgrimage site on an island in the Narmada River. Day trips are highly popular.',
+    tags: ['Jyotirlinga', 'Pilgrimage', 'Island Temple'],
+    color: 'from-green-950 to-green-700',
+    icon: '⛩',
+  },
+  {
+    name: 'Mandu (Mandavgarh)',
+    dist: '65 km · 90 min drive',
+    desc: 'An ancient ruined city of Afghan architecture — palaces, mosques, and baolis spread across a hilltop plateau. Day trip from Yashraj Palace.',
+    tags: ['Heritage', 'Architecture', 'Day Trip'],
+    color: 'from-amber-950 to-amber-700',
+    icon: '🏰',
+  },
+  {
+    name: 'Indore City',
+    dist: '90 km · 2 hr drive',
+    desc: 'Madhya Pradesh\'s largest city — Rajwada Palace, Lal Bagh, Sarafa Bazaar night market, and Indore airport for onward connections.',
+    tags: ['City', 'Shopping', 'Airport', 'Food'],
+    color: 'from-rose-950 to-rose-700',
+    icon: '🌆',
+  },
 ]
 
-export function NearbyPage() {
+const NEARBY_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristAttraction',
+  name: 'Yashraj Palace – Near Maheshwar and Narmada Valley',
+  description: 'Yashraj Palace is ideally located for exploring Maheshwar Fort, Narmada Ghats, Omkareshwar, Mandleshwar and Mandu — all within 90 km.',
+  url: 'https://www.yashrajpalace.com/nearby-attractions',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Mandleshwar',
+    addressRegion: 'Madhya Pradesh',
+    addressCountry: 'IN',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: '22.1740', longitude: '75.6560' },
+  nearbyAttraction: ATTRACTIONS.map(a => ({
+    '@type': 'TouristAttraction',
+    name: a.name,
+    description: a.desc,
+  })),
+}
+
+export default function NearbyPage() {
   return (
     <>
       <Helmet>
-        <title>Nearby Attractions – Yashraj Palace | Maheshwar, Omkareshwar, Narmada</title>
-        <meta name="description" content="Explore Maheshwar Fort, Narmada Ghats, Omkareshwar and Mandleshwar from Yashraj Palace. Centrally located for MP tourism." />
+        <title>Nearby Attractions – Yashraj Palace | Maheshwar Fort, Narmada Ghat, Omkareshwar</title>
+        <meta name="description" content="Yashraj Palace is perfectly located near Maheshwar Fort (12 km), Narmada Ghat (14 km), Omkareshwar (38 km), and Mandu (65 km). Explore Narmada Valley from our hotel." />
+        <link rel="canonical" href="https://www.yashrajpalace.com/nearby-attractions" />
+        <meta property="og:title" content="Nearby Attractions – Yashraj Palace | Maheshwar, Narmada Valley" />
+        <meta property="og:description" content="Base yourself at Yashraj Palace to explore Maheshwar Fort, Narmada Ghat, Omkareshwar, and Mandu — all within 90 km." />
+        <meta property="og:url" content="https://www.yashrajpalace.com/nearby-attractions" />
+        <script type="application/ld+json">{JSON.stringify(NEARBY_SCHEMA)}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.yashrajpalace.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Nearby Attractions', item: 'https://www.yashrajpalace.com/nearby-attractions' },
+          ],
+        })}</script>
       </Helmet>
+
       <div className="page-hero">
         <div className="absolute inset-0 hero-pattern" />
         <div className="relative z-10 max-w-7xl mx-auto text-center">
           <p className="section-eyebrow text-gold">Explore the Region</p>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white mb-4">Nearby Attractions</h1>
-          <p className="text-white/65 max-w-xl mx-auto">Stay at Yashraj Palace and explore the cultural, historical, and spiritual richness of the Narmada Valley.</p>
+          <p className="text-white/65 max-w-xl mx-auto">Yashraj Palace places you at the heart of one of Madhya Pradesh's most historic and spiritually rich regions — Narmada Valley.</p>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 py-16 space-y-8">
-        {ATTRACTIONS.map((a, i) => (
-          <div key={a.name} className={`flex flex-col ${i%2===0?'md:flex-row':'md:flex-row-reverse'} gap-8 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm`}>
-            <div className={`md:w-72 h-52 md:h-auto bg-gradient-to-br ${a.color} flex items-center justify-center shrink-0`}>
-              <span className="text-6xl opacity-20">{a.icon}</span>
-            </div>
-            <div className="p-7 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="font-serif text-2xl font-semibold">{a.name}</h2>
-                <span className="badge bg-gold/20 text-maroon text-xs">{a.dist} · {a.time} drive</span>
+
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <p className="section-eyebrow">Gateway to Narmada Valley</p>
+          <div className="gold-divider mx-auto" />
+          <h2 className="section-title">Places to Explore Near Yashraj Palace</h2>
+          <p className="text-charcoal-muted max-w-xl mx-auto">All distances are from Yashraj Palace, Mandleshwar. Our front desk can help arrange day-trip transportation.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {ATTRACTIONS.map(a => (
+            <div key={a.name} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:-translate-y-2 hover:shadow-xl transition-all duration-300 group">
+              <div className={`h-40 bg-gradient-to-br ${a.color} relative flex items-center justify-center overflow-hidden`}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="text-5xl opacity-20 group-hover:opacity-35 transition-opacity">{a.icon}</div>
+                <div className="absolute bottom-3 left-4 right-4">
+                  <div className="font-serif text-white text-lg font-semibold">{a.name}</div>
+                  <div className="text-white/65 text-xs flex items-center gap-1 mt-0.5">
+                    <FiMapPin size={11} /> {a.dist}
+                  </div>
+                </div>
               </div>
-              <p className="text-charcoal-muted leading-relaxed mb-4">{a.desc}</p>
-              <div>
-                <p className="text-xs font-semibold text-charcoal uppercase tracking-wider mb-2">Tips</p>
-                <ul className="space-y-1">
-                  {a.tips.map(t => (
-                    <li key={t} className="text-sm text-charcoal-muted flex items-center gap-2">
-                      <span className="text-gold">•</span> {t}
-                    </li>
+              <div className="p-5">
+                <p className="text-sm text-charcoal-muted leading-relaxed mb-4">{a.desc}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {a.tags.map(tag => (
+                    <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-ivory-dark text-charcoal-muted">{tag}</span>
                   ))}
-                </ul>
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Map CTA */}
+        <div className="mt-14 rounded-2xl p-8 text-center text-white" style={{ background: 'linear-gradient(135deg, #4A0F1D, #6B1A2B)' }}>
+          <h2 className="font-serif text-2xl mb-3">Plan Your Stay Around These Attractions</h2>
+          <p className="text-white/70 max-w-lg mx-auto mb-6">
+            Our front desk team can help arrange transportation, suggest itineraries, and make sure you don't miss a single highlight of the Narmada Valley.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to="/book-room" className="btn-gold text-sm px-7">Book Your Room</Link>
+            <a href="https://wa.me/917000000000" className="btn-whatsapp text-sm px-5">
+              Ask on WhatsApp
+            </a>
           </div>
-        ))}
-      </div>
-      <div className="bg-maroon-dark py-14 px-4 text-center">
-        <h2 className="font-serif text-2xl text-white mb-3">Plan Your Stay Around the Sights</h2>
-        <p className="text-white/65 mb-6 max-w-lg mx-auto">Book a room at Yashraj Palace and use it as your base to explore the entire Narmada Valley.</p>
-        <Link to="/book-room" className="btn-gold text-sm px-8">Book Your Room</Link>
+        </div>
       </div>
     </>
   )
 }
-
-export default NearbyPage
