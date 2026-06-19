@@ -16,9 +16,9 @@ reviewRouter.put('/admin/:id',   protect, staff, misc.updateReview);
 // ── Gallery routes ────────────────────────────────────────────────────────────
 const galleryRouter = express.Router();
 galleryRouter.get('/',        misc.getGallery);
-galleryRouter.post('/',       protect, admin, misc.addGalleryImage);
+galleryRouter.post('/',       protect, misc.addGalleryImage);
 galleryRouter.put('/:id',     protect, admin, misc.updateGalleryImage);
-galleryRouter.delete('/:id',  protect, admin, misc.deleteGalleryImage);
+galleryRouter.delete('/:id',  protect, misc.deleteGalleryImage);
 
 // ── Inquiry routes ────────────────────────────────────────────────────────────
 const inquiryRouter = express.Router();

@@ -81,8 +81,14 @@ const updateGalleryImage = asyncHandler(async (req, res) => {
 });
 
 const deleteGalleryImage = asyncHandler(async (req, res) => {
-  const image = await Gallery.findByIdAndDelete(req.params.id);
+  const image = await Gallery.findById(req.params.id);
   if (!image) { res.status(404); throw new Error('Gallery image not found'); }
+  const isOwner = image.uploadedBy && String(image.uploadedBy) === String(req.user._id);
+  const isAdminUser = req.user.role === 'admin' || req.user.role === 'staff';
+  if (!isOwner && !isAdminUser) {
+    res.status(403); throw new Error('You can only delete your own images');
+  }
+  await image.deleteOne();
   socket.emit('content_updated', { type: 'gallery', action: 'deleted' });
   res.json({ success: true, message: 'Image deleted' });
 });
