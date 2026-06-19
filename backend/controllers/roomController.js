@@ -2,8 +2,9 @@ const asyncHandler = require('express-async-handler');
 const Room = require('../models/Room');
 const RoomBooking = require('../models/RoomBooking');
 const slugify = require('slugify');
+const socket = require('../utils/socket');
 
-// @desc  Get all rooms
+// @desc  Get all active rooms (public)
 // @route GET /api/rooms
 const getRooms = asyncHandler(async (req, res) => {
   const { type, minPrice, maxPrice, capacity } = req.query;
@@ -16,6 +17,13 @@ const getRooms = asyncHandler(async (req, res) => {
     if (maxPrice) query.price.$lte = parseInt(maxPrice);
   }
   const rooms = await Room.find(query).sort({ sortOrder: 1, price: 1 });
+  res.json({ success: true, count: rooms.length, rooms });
+});
+
+// @desc  Get ALL rooms including inactive (admin only)
+// @route GET /api/rooms/admin/all
+const getRoomsAdmin = asyncHandler(async (req, res) => {
+  const rooms = await Room.find({}).sort({ isActive: -1, sortOrder: 1, price: 1 });
   res.json({ success: true, count: rooms.length, rooms });
 });
 
@@ -43,9 +51,7 @@ const checkAvailability = asyncHandler(async (req, res) => {
   const conflicting = await RoomBooking.findOne({
     room: roomId,
     status: { $in: ['pending', 'confirmed', 'checked_in'] },
-    $or: [
-      { checkIn: { $lt: checkOutDate }, checkOut: { $gt: checkInDate } }
-    ]
+    $or: [{ checkIn: { $lt: checkOutDate }, checkOut: { $gt: checkInDate } }]
   });
 
   const room = await Room.findById(roomId);
@@ -62,6 +68,8 @@ const createRoom = asyncHandler(async (req, res) => {
   const { name, ...rest } = req.body;
   const slug = slugify(name, { lower: true, strict: true });
   const room = await Room.create({ name, slug, ...rest });
+  // Notify all website visitors so they see the new room immediately
+  socket.emit('content_updated', { type: 'rooms', action: 'created', roomId: room._id });
   res.status(201).json({ success: true, room });
 });
 
@@ -70,14 +78,17 @@ const createRoom = asyncHandler(async (req, res) => {
 const updateRoom = asyncHandler(async (req, res) => {
   const room = await Room.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
   if (!room) { res.status(404); throw new Error('Room not found'); }
+  // Notify website in real time
+  socket.emit('content_updated', { type: 'rooms', action: 'updated', roomId: room._id });
   res.json({ success: true, room });
 });
 
-// @desc  Delete room (Admin)
+// @desc  Delete/deactivate room (Admin)
 // @route DELETE /api/rooms/:id
 const deleteRoom = asyncHandler(async (req, res) => {
   const room = await Room.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
   if (!room) { res.status(404); throw new Error('Room not found'); }
+  socket.emit('content_updated', { type: 'rooms', action: 'deleted', roomId: room._id });
   res.json({ success: true, message: 'Room deactivated' });
 });
 
@@ -102,4 +113,4 @@ const getUnavailableDates = asyncHandler(async (req, res) => {
   res.json({ success: true, unavailableDates });
 });
 
-module.exports = { getRooms, getRoom, checkAvailability, createRoom, updateRoom, deleteRoom, getUnavailableDates };
+module.exports = { getRooms, getRoomsAdmin, getRoom, checkAvailability, createRoom, updateRoom, deleteRoom, getUnavailableDates };

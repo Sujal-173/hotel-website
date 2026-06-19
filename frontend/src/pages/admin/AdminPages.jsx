@@ -167,7 +167,7 @@ export function AdminRooms() {
 
   const load = async () => {
     setLoading(true)
-    try { const { data } = await roomsAPI.getAll({}); setRooms(data.rooms) }
+    try { const { data } = await roomsAPI.adminGetAll(); setRooms(data.rooms) }
     catch { toast.error('Failed to load rooms') }
     setLoading(false)
   }
@@ -513,7 +513,7 @@ export function AdminOffers() {
 
   const load = async () => {
     setLoading(true)
-    try { const { data } = await offersAPI.getAll(); setOffers(data.offers) }
+    try { const { data } = await offersAPI.adminGetAll(); setOffers(data.offers) }
     catch {}
     setLoading(false)
   }
@@ -614,6 +614,20 @@ export function AdminPackages() {
     setSaving(false)
   }
 
+  const togglePackageActive = async (id, isActive) => {
+    try {
+      await eventsAPI.updatePackage(id, { isActive })
+      load()
+      toast.success(isActive ? 'Package activated' : 'Package deactivated')
+    } catch { toast.error('Failed') }
+  }
+
+  const deletePackage = async (id) => {
+    if (!window.confirm('Deactivate this package?')) return
+    try { await eventsAPI.deletePackage(id); toast.success('Package deactivated'); load() }
+    catch { toast.error('Failed') }
+  }
+
   return (
     <div className="p-6 max-w-7xl">
       <AdminPageHeader title="Event Packages" subtitle={`${packages.length} packages`}
@@ -636,8 +650,10 @@ export function AdminPackages() {
                     <td className="px-4 py-3 text-sm">{p.duration} day{p.duration>1?'s':''}</td>
                     <td className="px-4 py-3 text-sm capitalize">{p.venue}</td>
                     <td className="px-4 py-3"><span className={`badge ${p.isActive?'bg-green-100 text-green-700':'bg-gray-100 text-gray-500'}`}>{p.isActive?'Active':'Inactive'}</span></td>
-                    <td className="px-4 py-3 flex gap-2">
+                    <td className="px-4 py-3 flex gap-2 items-center">
                       <button onClick={()=>{setForm({...p,price:p.price?.toString(),inclusions:(p.inclusions||[]).join('\n'),exclusions:(p.exclusions||[]).join('\n')});setEditing(p._id);setShowForm(true)}} className="text-blue-500 hover:text-blue-700"><FiEdit2 size={15}/></button>
+                      <button onClick={()=>togglePackageActive(p._id,!p.isActive)} className={`text-xs font-semibold ${p.isActive?'text-orange-400 hover:text-orange-600':'text-green-500 hover:text-green-700'}`}>{p.isActive?'Hide':'Show'}</button>
+                      <button onClick={()=>deletePackage(p._id)} className="text-red-400 hover:text-red-600"><FiTrash2 size={15}/></button>
                     </td>
                   </tr>
                 ))}

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { roomsAPI } from '../utils/api'
+import { useSocket } from '../context/SocketContext'
 import toast from 'react-hot-toast'
 import { FiCheck, FiUsers, FiMaximize2, FiWifi, FiStar, FiShield } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
@@ -63,13 +64,24 @@ export default function RoomsPage() {
   const [guests, setGuests]         = useState(searchParams.get('guests') || '2')
   const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || '')
   const [heroRoomType, setHeroRoomType] = useState('')
+  const { subscribe } = useSocket() || {}
 
-  useEffect(() => {
+  const loadRooms = useCallback(() => {
     roomsAPI.getAll(typeFilter ? { type: typeFilter } : {})
       .then(r => setRooms(r.data.rooms))
       .catch(() => toast.error('Failed to load rooms'))
       .finally(() => setLoading(false))
   }, [typeFilter])
+
+  useEffect(() => { loadRooms() }, [loadRooms])
+
+  // Live update: reload when admin changes rooms
+  useEffect(() => {
+    if (!subscribe) return
+    return subscribe('content_updated', (data) => {
+      if (data?.type === 'rooms') loadRooms()
+    })
+  }, [subscribe, loadRooms])
 
   const handleHeroSearch = () => {
     if (!checkIn || !checkOut) { toast.error('Please select check-in and check-out dates'); return }

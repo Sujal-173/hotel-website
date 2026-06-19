@@ -6,7 +6,6 @@ const socket = require('../utils/socket');
 // ─── REVIEWS ────────────────────────────────────────────────────────────────
 
 const createReview = asyncHandler(async (req, res) => {
-  // Whitelist only safe fields — prevent mass assignment
   const { name, email, rating, title, comment, occasion, stayDate } = req.body;
   const review = await Review.create({ name, email, rating, title, comment, occasion, stayDate });
   res.status(201).json({
@@ -33,7 +32,6 @@ const getAllReviewsAdmin = asyncHandler(async (req, res) => {
 });
 
 const updateReview = asyncHandler(async (req, res) => {
-  // Whitelist admin-updatable fields only
   const { isApproved, isFeatured, isActive } = req.body;
   const review = await Review.findByIdAndUpdate(
     req.params.id,
@@ -43,6 +41,8 @@ const updateReview = asyncHandler(async (req, res) => {
     { new: true }
   );
   if (!review) { res.status(404); throw new Error('Review not found'); }
+  // Emit live update so the public Reviews page refreshes
+  socket.emit('content_updated', { type: 'reviews', action: 'updated' });
   res.json({ success: true, review });
 });
 
@@ -64,6 +64,7 @@ const addGalleryImage = asyncHandler(async (req, res) => {
     title, url, thumbnail, category, alt, caption, isFeatured, sortOrder,
     uploadedBy: req.user._id,
   });
+  socket.emit('content_updated', { type: 'gallery', action: 'added' });
   res.status(201).json({ success: true, image });
 });
 
@@ -75,12 +76,14 @@ const updateGalleryImage = asyncHandler(async (req, res) => {
     { new: true }
   );
   if (!image) { res.status(404); throw new Error('Gallery image not found'); }
+  socket.emit('content_updated', { type: 'gallery', action: 'updated' });
   res.json({ success: true, image });
 });
 
 const deleteGalleryImage = asyncHandler(async (req, res) => {
   const image = await Gallery.findByIdAndDelete(req.params.id);
   if (!image) { res.status(404); throw new Error('Gallery image not found'); }
+  socket.emit('content_updated', { type: 'gallery', action: 'deleted' });
   res.json({ success: true, message: 'Image deleted' });
 });
 
@@ -135,7 +138,12 @@ const getOffers = asyncHandler(async (req, res) => {
   res.json({ success: true, offers });
 });
 
-// Validate only — increment happens atomically in createBooking, not here
+// Admin: returns ALL offers regardless of isActive / endDate
+const getOffersAdmin = asyncHandler(async (req, res) => {
+  const offers = await Offer.find({}).sort({ createdAt: -1 });
+  res.json({ success: true, offers });
+});
+
 const validateOffer = asyncHandler(async (req, res) => {
   const { code, amount, type } = req.body;
   if (!code) { res.status(400); throw new Error('Promo code is required'); }
@@ -252,6 +260,6 @@ module.exports = {
   createReview, getReviews, getAllReviewsAdmin, updateReview,
   getGallery, addGalleryImage, updateGalleryImage, deleteGalleryImage,
   createInquiry, getAllInquiries, updateInquiry,
-  getOffers, validateOffer, createOffer, updateOffer,
+  getOffers, getOffersAdmin, validateOffer, createOffer, updateOffer,
   getDashboardStats,
 };

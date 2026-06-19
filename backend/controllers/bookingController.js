@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const RoomBooking = require('../models/RoomBooking');
 const Room = require('../models/Room');
@@ -184,7 +185,11 @@ const getBookingById = asyncHandler(async (req, res) => {
 // @desc  Cancel booking (authenticated — owner only, no refund auto-triggered here)
 // @route PUT /api/bookings/:id/cancel
 const cancelBooking = asyncHandler(async (req, res) => {
-  const booking = await RoomBooking.findById(req.params.id);
+  const id = req.params.id;
+  // Accept both MongoDB _id and friendly bookingId (e.g. YPR1A2B3C)
+  const booking = mongoose.Types.ObjectId.isValid(id)
+    ? await RoomBooking.findById(id)
+    : await RoomBooking.findOne({ bookingId: id });
   if (!booking) { res.status(404); throw new Error('Booking not found'); }
 
   const isOwner = booking.user && booking.user.toString() === req.user._id.toString();

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { galleryAPI } from '../utils/api'
+import { useSocket } from '../context/SocketContext'
 import { FiCamera, FiGrid, FiX } from 'react-icons/fi'
 
 const CATEGORIES = ['all','rooms','weddings','garden','banquet','food','property','events']
@@ -44,13 +45,24 @@ export default function GalleryPage() {
   const [loading, setLoading]   = useState(true)
   const [selected, setSelected] = useState(null)
   const [selectedIdx, setSelectedIdx] = useState(null)
+  const { subscribe } = useSocket() || {}
 
-  useEffect(() => {
+  const loadGallery = useCallback(() => {
     galleryAPI.getAll()
       .then(r => setImages(r.data.images.length ? r.data.images : PLACEHOLDER))
       .catch(() => setImages(PLACEHOLDER))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => { loadGallery() }, [loadGallery])
+
+  // Live update: reload when admin changes gallery images
+  useEffect(() => {
+    if (!subscribe) return
+    return subscribe('content_updated', (data) => {
+      if (data?.type === 'gallery') loadGallery()
+    })
+  }, [subscribe, loadGallery])
 
   const shown = filter === 'all' ? images : images.filter(i => i.category === filter)
 

@@ -42,9 +42,10 @@ export const roomsAPI = {
   checkAvailability:   (data)   => api.post('/rooms/check-availability', data),
   getUnavailableDates: (id)     => api.get(`/rooms/${id}/unavailable-dates`),
   // Admin
-  create: (data)       => api.post('/rooms', data),
-  update: (id, data)   => api.put(`/rooms/${id}`, data),
-  delete: (id)         => api.delete(`/rooms/${id}`),
+  adminGetAll: ()              => api.get('/rooms/admin/all'),
+  create:      (data)          => api.post('/rooms', data),
+  update:      (id, data)      => api.put(`/rooms/${id}`, data),
+  delete:      (id)            => api.delete(`/rooms/${id}`),
 }
 
 // ─── BOOKINGS ─────────────────────────────────────────────────────────────────
@@ -70,6 +71,7 @@ export const eventsAPI = {
   updateStatus:  (id, data)  => api.put(`/events/admin/${id}/status`, data),
   createPackage: (data)      => api.post('/packages', data),
   updatePackage: (id, data)  => api.put(`/packages/${id}`, data),
+  deletePackage: (id)        => api.delete(`/packages/${id}`),
 }
 
 // ─── PAYMENTS ─────────────────────────────────────────────────────────────────
@@ -108,10 +110,11 @@ export const inquiriesAPI = {
 
 // ─── OFFERS ───────────────────────────────────────────────────────────────────
 export const offersAPI = {
-  getAll:   ()          => api.get('/offers'),
-  validate: (data)      => api.post('/offers/validate', data),
-  create:   (data)      => api.post('/offers/admin', data),
-  update:   (id, data)  => api.put(`/offers/admin/${id}`, data),
+  getAll:      ()          => api.get('/offers'),
+  adminGetAll: ()          => api.get('/offers/admin/all'),
+  validate:    (data)      => api.post('/offers/validate', data),
+  create:      (data)      => api.post('/offers/admin', data),
+  update:      (id, data)  => api.put(`/offers/admin/${id}`, data),
 }
 
 // ─── ADMIN ────────────────────────────────────────────────────────────────────

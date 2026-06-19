@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Star, Crown } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { reviewsAPI } from '../utils/api'
+import { useSocket } from '../context/SocketContext'
 
 const STATIC_REVIEWS = [
   { _id:'r1', guestName:'Ramesh Verma',   rating:5, occasion:'Wedding Reception · March 2025',  comment:'We hosted my daughter\'s wedding reception here. The garden was beautifully lit, food was excellent, and the coordination team handled everything flawlessly. Highly recommended.', verified:true },
@@ -49,13 +50,24 @@ function StarRow({ rating, size = 13 }) {
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
+  const { subscribe } = useSocket() || {}
 
-  useEffect(() => {
+  const loadReviews = useCallback(() => {
     reviewsAPI.getAll()
       .then(r => setReviews(r.data.reviews?.length ? r.data.reviews : STATIC_REVIEWS))
       .catch(() => setReviews(STATIC_REVIEWS))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => { loadReviews() }, [loadReviews])
+
+  // Live update: reload when admin approves/features a review
+  useEffect(() => {
+    if (!subscribe) return
+    return subscribe('content_updated', (data) => {
+      if (data?.type === 'reviews') loadReviews()
+    })
+  }, [subscribe, loadReviews])
 
   const avgRating = (reviews.reduce((a, r) => a + r.rating, 0) / (reviews.length || 1)).toFixed(1)
 

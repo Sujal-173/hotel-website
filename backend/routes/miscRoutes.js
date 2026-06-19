@@ -28,10 +28,12 @@ inquiryRouter.put('/admin/:id',   protect, staff, misc.updateInquiry);
 
 // ── Offer routes ──────────────────────────────────────────────────────────────
 const offerRouter = express.Router();
-offerRouter.get('/',          misc.getOffers);
-offerRouter.post('/validate', misc.validateOffer);
-offerRouter.post('/admin',    protect, admin, misc.createOffer);
-offerRouter.put('/admin/:id', protect, admin, misc.updateOffer);
+offerRouter.get('/',           misc.getOffers);
+offerRouter.post('/validate',  misc.validateOffer);
+// Admin routes — must be before /:id to avoid route conflicts
+offerRouter.get('/admin/all',  protect, admin, misc.getOffersAdmin);
+offerRouter.post('/admin',     protect, admin, misc.createOffer);
+offerRouter.put('/admin/:id',  protect, admin, misc.updateOffer);
 
 // ── Admin dashboard ───────────────────────────────────────────────────────────
 const adminRouter = express.Router();

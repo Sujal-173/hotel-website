@@ -27,13 +27,13 @@ export default function MyBookingsPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleCancel = async (bookingId) => {
+  const handleCancel = async (id, bookingId) => {
     if (!window.confirm('Cancel this booking?')) return
-    setCancelling(bookingId)
+    setCancelling(id)
     try {
-      await bookingsAPI.cancel(bookingId, { reason: 'Cancelled by guest' })
+      await bookingsAPI.cancel(id, { reason: 'Cancelled by guest' })
       setBookings(prev => prev.map(b =>
-        b.bookingId === bookingId ? { ...b, status: 'cancelled' } : b
+        b._id === id ? { ...b, status: 'cancelled' } : b
       ))
       toast.success('Booking cancelled')
     } catch (err) {
@@ -123,11 +123,11 @@ export default function MyBookingsPage() {
                         </Link>
                         {['pending', 'confirmed'].includes(b.status) && (
                           <button
-                            onClick={() => handleCancel(b.bookingId)}
-                            disabled={cancelling === b.bookingId}
+                            onClick={() => handleCancel(b._id, b.bookingId)}
+                            disabled={cancelling === b._id}
                             className="text-xs text-red-500 hover:underline disabled:opacity-50"
                           >
-                            {cancelling === b.bookingId ? 'Cancelling…' : 'Cancel'}
+                            {cancelling === b._id ? 'Cancelling…' : 'Cancel'}
                           </button>
                         )}
                       </div>
